@@ -9,21 +9,25 @@
     <title>飯飯都掂 🍚 - 私人美食地圖</title>
     <!-- Google Fonts 圓體字 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --bg-color: #FDFCF8;
+            --bg-color: #FAF6F0;
             --card-bg: #FFFFFF;
-            --text-main: #5C4033;
-            --text-muted: #A89F91;
-            --accent-color: #E6C7A2;
-            --accent-hover: #DDC09B;
+            --text-main: #4A4A4A;
+            --text-muted: #8C8C8C;
+            --accent-pink: #FFD1DC;
+            --accent-pink-dark: #E5A3B3;
+            --accent-yellow: #FFEAA7;
+            --accent-green: #D1E8E2;
+            --accent-blue: #D4E6F1;
+            --accent-purple: #E8DAEF;
             --star-color: #FFC048;
-            --border-radius-lg: 24px;
+            --border-radius-lg: 20px;
             --border-radius-sm: 12px;
-            --shadow-soft: 4px 4px 0px #5C4033;
-            --joguman-line: 2.5px;
+            --shadow-soft: 0 8px 20px rgba(180, 160, 140, 0.12);
         }
 
         * {
@@ -33,51 +37,56 @@
 
         body {
             background-color: var(--bg-color);
-            font-family: 'M PLUS Rounded 1c', sans-serif;
+            font-family: 'M PLUS Rounded 1c', 'Noto Sans TC', -apple-system, sans-serif;
             color: var(--text-main);
             margin: 0;
             padding: 0;
-            padding-bottom: 100px;
-            line-height: 1.5;
+            padding-bottom: 90px;
+            line-height: 1.6;
         }
 
+        /* 頂部 Header */
         header {
-            background-color: rgba(253, 252, 248, 0.95);
+            background-color: rgba(250, 246, 240, 0.92);
             backdrop-filter: blur(10px);
             position: sticky;
             top: 0;
             z-index: 100;
-            padding: 14px 20px;
-            border-bottom: var(--joguman-line) solid var(--text-main);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 6px;
+            padding: 16px 20px 12px;
+            border-bottom: 2px dashed #EFE6DC;
+            text-align: center;
         }
 
-        .brand-area {
+        .brand {
             display: flex;
             align-items: center;
-            gap: 10px;
+            justify-content: center;
+            gap: 8px;
         }
 
-        .mascot-svg {
-            width: 55px;
-            height: auto;
+        .brand-icon {
+            font-size: 2rem;
+            animation: bounce 2s infinite ease-in-out;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
         }
 
         h1 {
-            font-size: 1.7rem;
+            font-size: 1.65rem;
             font-weight: 800;
             margin: 0;
-            color: var(--text-main);
-            letter-spacing: 0.5px;
+            color: #5C4033;
+            letter-spacing: 1px;
         }
 
         .subtitle {
-            font-size: 0.8rem;
+            font-size: 0.82rem;
             color: var(--text-muted);
-            font-weight: 700;
+            margin-top: 2px;
+            font-weight: 500;
         }
 
         .container {
@@ -86,29 +95,39 @@
             padding: 16px;
         }
 
+        /* 搜尋與篩選器 */
         .search-box {
             width: 100%;
             background: var(--card-bg);
-            border: var(--joguman-line) solid var(--text-main);
+            border: 2px solid #EFE6DC;
             padding: 12px 18px;
-            border-radius: 30px;
+            border-radius: 25px;
             font-family: inherit;
             font-size: 0.95rem;
             color: var(--text-main);
             outline: none;
-            box-shadow: 3px 3px 0px var(--text-main);
-            margin-bottom: 16px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            transition: all 0.2s ease;
+            margin-bottom: 14px;
+        }
+
+        .search-box:focus {
+            border-color: var(--accent-pink-dark);
+            box-shadow: 0 4px 12px rgba(229, 163, 179, 0.25);
         }
 
         .filter-group {
-            margin-bottom: 14px;
+            margin-bottom: 18px;
         }
 
         .filter-title {
             font-size: 0.85rem;
-            font-weight: 800;
-            color: var(--text-main);
-            margin-bottom: 6px;
+            font-weight: 700;
+            color: #7A6055;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
         .tags-scroll {
@@ -118,46 +137,46 @@
         }
 
         .tag-btn {
-            background: #F4EBE1;
-            color: var(--text-main);
-            border: var(--joguman-line) solid var(--text-main);
+            background: #EFE8DE;
+            color: #6B5B52;
+            border: none;
             padding: 6px 14px;
             border-radius: 20px;
-            font-size: 0.8rem;
+            font-size: 0.82rem;
             font-family: inherit;
-            font-weight: 800;
+            font-weight: 700;
             cursor: pointer;
-            box-shadow: 2px 2px 0px var(--text-main);
-            transition: all 0.1s ease;
+            transition: all 0.2s ease;
         }
 
         .tag-btn.active {
-            background: var(--text-main);
+            background: var(--accent-pink-dark);
             color: #FFFFFF;
-            transform: translate(2px, 2px);
-            box-shadow: none;
+            transform: scale(1.03);
+            box-shadow: 0 3px 8px rgba(229, 163, 179, 0.4);
         }
 
+        /* 餐廳列表卡片 */
         .restaurant-list {
             display: flex;
             flex-direction: column;
             gap: 16px;
-            margin-top: 10px;
         }
 
         .card {
             background: var(--card-bg);
             border-radius: var(--border-radius-lg);
             padding: 18px;
-            border: var(--joguman-line) solid var(--text-main);
             box-shadow: var(--shadow-soft);
+            border: 2px solid #F3EDE5;
             cursor: pointer;
-            transition: transform 0.1s ease, box-shadow 0.1s ease;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            position: relative;
+            overflow: hidden;
         }
 
         .card:active {
-            transform: translate(2px, 2px);
-            box-shadow: 2px 2px 0px var(--text-main);
+            transform: scale(0.98);
         }
 
         .card-header {
@@ -169,79 +188,89 @@
 
         .card-title {
             font-size: 1.25rem;
-            font-weight: 900;
-            color: var(--text-main);
+            font-weight: 800;
+            color: #3D2C28;
             margin: 0;
         }
 
         .stars {
             color: var(--star-color);
             font-size: 0.95rem;
+            letter-spacing: 1px;
             font-weight: bold;
-            text-shadow: 1px 1px 0 var(--text-main);
         }
 
         .card-tags {
             display: flex;
             flex-wrap: wrap;
             gap: 6px;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
 
         .tag-badge {
-            padding: 3px 10px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 800;
-            background-color: #FAF0E6;
-            border: 2px solid var(--text-main);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            border: 2px solid #5C4033;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .tag-district, .tag-category {
+            background-color: var(--card-bg);
+            color: #5C4033;
         }
 
         .card-preview {
-            background-color: #FDF9F0;
+            background-color: #FAF5EF;
             border-radius: var(--border-radius-sm);
             padding: 10px 12px;
-            font-size: 0.9rem;
-            color: var(--text-main);
-            border: var(--joguman-line) solid var(--text-main);
+            font-size: 0.88rem;
+            color: #555;
+            border-left: 4px solid var(--accent-pink-dark);
         }
 
         .card-preview strong {
-            color: #A0522D;
+            color: #8C4254;
         }
 
         .provider-tag {
-            font-size: 0.78rem;
+            font-size: 0.75rem;
             color: var(--text-muted);
             margin-top: 8px;
-            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
+        /* 懸浮新增按鈕 (FAB) */
         .fab {
             position: fixed;
             bottom: 24px;
             right: 20px;
-            background: var(--accent-color);
-            color: var(--text-main);
-            border: var(--joguman-line) solid var(--text-main);
+            background: linear-gradient(135deg, #FFB6C1, #E5A3B3);
+            color: white;
+            border: none;
             border-radius: 30px;
-            padding: 14px 20px;
+            padding: 14px 22px;
             font-family: inherit;
             font-size: 1rem;
-            font-weight: 900;
-            box-shadow: 4px 4px 0px var(--text-main);
+            font-weight: 800;
+            box-shadow: 0 8px 20px rgba(229, 163, 179, 0.5);
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             z-index: 90;
         }
 
         .fab:active {
-            transform: translate(2px, 2px);
-            box-shadow: 2px 2px 0px var(--text-main);
+            transform: scale(0.95);
         }
 
+        /* 彈出視窗 (Modal) */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -249,159 +278,175 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(92, 64, 51, 0.5);
-            backdrop-filter: blur(3px);
+            background: rgba(74, 60, 50, 0.45);
+            backdrop-filter: blur(4px);
             z-index: 200;
             justify-content: center;
             align-items: flex-end;
+            animation: fadeIn 0.25s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
 
         .modal-container {
-            background: var(--bg-color);
+            background: var(--card-bg);
             width: 100%;
             max-width: 600px;
             max-height: 88vh;
             border-top-left-radius: 28px;
             border-top-right-radius: 28px;
-            border-left: var(--joguman-line) solid var(--text-main);
-            border-right: var(--joguman-line) solid var(--text-main);
-            border-top: var(--joguman-line) solid var(--text-main);
-            padding: 24px 20px;
+            padding: 24px 20px 32px;
             overflow-y: auto;
             position: relative;
-            box-shadow: 0 -10px 25px rgba(0,0,0,0.1);
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.15);
+            animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
         }
 
         .modal-close {
             position: absolute;
             top: 18px;
-            right: 18px;
-            background: #F4EBE1;
-            border: var(--joguman-line) solid var(--text-main);
+            right: 20px;
+            background: #F3EDE5;
+            border: none;
             width: 34px;
             height: 34px;
             border-radius: 50%;
-            font-size: 1rem;
-            font-weight: 900;
-            color: var(--text-main);
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #7A6055;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 2px 2px 0px var(--text-main);
+        }
+
+        .detail-header {
+            margin-bottom: 16px;
+            padding-right: 40px;
+        }
+
+        .detail-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #3D2C28;
+            margin: 0 0 6px 0;
         }
 
         .detail-section {
-            background-color: var(--card-bg);
+            background-color: #FAF6F0;
             border-radius: var(--border-radius-sm);
-            border: var(--joguman-line) solid var(--text-main);
-            padding: 12px 14px;
-            margin-bottom: 12px;
-            box-shadow: 2px 2px 0px var(--text-main);
+            padding: 14px 16px;
+            margin-bottom: 14px;
         }
 
         .detail-section-title {
-            font-size: 0.8rem;
-            font-weight: 900;
-            color: #A0522D;
-            margin-bottom: 4px;
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: #8C4254;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
 
         .detail-text {
-            font-size: 0.92rem;
+            font-size: 0.95rem;
+            color: var(--text-main);
             margin: 0;
             white-space: pre-line;
         }
 
         .avoid-box {
-            background-color: #FFF5F5;
-            border-color: #C53030;
+            background-color: #FFF2F2;
+            border-left: 4px solid #FF8080;
         }
+
         .avoid-box .detail-section-title {
             color: #C53030;
         }
 
-        .map-link-btn {
-            display: inline-block;
-            background-color: #E2F0D9;
-            color: #276749;
-            border: 2px solid var(--text-main);
-            padding: 6px 12px;
-            border-radius: 15px;
-            font-size: 0.85rem;
-            font-weight: 900;
-            text-decoration: none;
-            margin-top: 6px;
-            box-shadow: 2px 2px 0px var(--text-main);
-        }
-
-        .action-btns {
+        /* 動作按鈕列 (編輯/刪除餐廳) */
+        .action-bar {
             display: flex;
             gap: 10px;
-            margin-top: 16px;
+            margin-bottom: 16px;
         }
 
         .btn-action {
             flex: 1;
             padding: 10px;
             border-radius: 20px;
-            border: var(--joguman-line) solid var(--text-main);
             font-family: inherit;
-            font-weight: 900;
+            font-size: 0.88rem;
+            font-weight: 700;
             cursor: pointer;
-            box-shadow: 2px 2px 0px var(--text-main);
-        }
-        .btn-edit { background-color: #FFF3CD; }
-        .btn-delete { background-color: #FFD1DC; color: #9B2C2C; }
-
-        .comment-item {
-            background: #FDF9F0;
-            border: 2px solid var(--text-main);
-            padding: 8px 10px;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            font-size: 0.85rem;
-        }
-        .comment-author {
-            font-weight: 900;
-            color: #A0522D;
+            border: 2px solid #5C4033;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
         }
 
+        .btn-edit-res {
+            background-color: #FFF3CD;
+            color: #856404;
+        }
+
+        .btn-del-res {
+            background-color: #F8D7DA;
+            color: #721C24;
+        }
+
+        /* 表單樣式 */
         .form-group {
-            margin-bottom: 14px;
+            margin-bottom: 16px;
         }
 
         .form-label {
             display: block;
-            font-size: 0.85rem;
-            font-weight: 900;
-            margin-bottom: 4px;
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #5C4033;
+            margin-bottom: 6px;
         }
 
         .form-input, .form-select, .form-textarea {
             width: 100%;
-            padding: 10px 14px;
-            border: var(--joguman-line) solid var(--text-main);
+            padding: 12px 14px;
+            border: 2px solid #EFE6DC;
             border-radius: var(--border-radius-sm);
             font-family: inherit;
-            font-size: 0.9rem;
-            background: #FFF;
+            font-size: 0.92rem;
+            color: var(--text-main);
+            background: #FFFDF9;
             outline: none;
+        }
+
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            border-color: var(--accent-pink-dark);
         }
 
         .btn-submit {
             width: 100%;
-            background: var(--accent-color);
-            color: var(--text-main);
-            border: var(--joguman-line) solid var(--text-main);
-            padding: 12px;
+            background: linear-gradient(135deg, #FFB6C1, #E5A3B3);
+            color: white;
+            border: none;
+            padding: 14px;
             border-radius: 25px;
             font-family: inherit;
             font-size: 1rem;
-            font-weight: 900;
+            font-weight: 800;
             cursor: pointer;
-            box-shadow: 3px 3px 0px var(--text-main);
             margin-top: 10px;
+            box-shadow: 0 4px 12px rgba(229, 163, 179, 0.4);
         }
 
         .empty-state {
@@ -409,35 +454,95 @@
             padding: 40px 20px;
             color: var(--text-muted);
         }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .selected-tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .selected-tag-item {
+            background-color: #EFE8DE;
+            border: 2px solid #5C4033;
+            color: #5C4033;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .selected-tag-item button {
+            background: none;
+            border: none;
+            color: #5C4033;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.85rem;
+            padding: 0;
+        }
+
+        /* 留言區專用樣式 */
+        .comment-item {
+            background: white;
+            padding: 10px 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border: 1px solid #EFE6DC;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .comment-user {
+            font-weight: 700;
+            font-size: 0.82rem;
+            color: #8C4254;
+            margin-bottom: 2px;
+        }
+
+        .comment-actions {
+            display: flex;
+            gap: 6px;
+            font-size: 0.75rem;
+        }
+
+        .comment-action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        .comment-action-btn:hover {
+            color: #5C4033;
+        }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="brand-area">
-            <svg class="mascot-svg" viewBox="0 0 120 60" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="35" cy="30" r="20" fill="#FFFFFF" stroke="#5C4033" stroke-width="2.5"/>
-                <circle cx="23" cy="16" r="7" fill="#5C4033"/>
-                <circle cx="47" cy="16" r="7" fill="#5C4033"/>
-                <ellipse cx="28" cy="27" rx="5" ry="7" fill="#5C4033" transform="rotate(-15 28 27)"/>
-                <ellipse cx="42" cy="27" rx="5" ry="7" fill="#5C4033" transform="rotate(15 42 27)"/>
-                <circle cx="28" cy="26" r="2" fill="#FFF"/>
-                <circle cx="42" cy="26" r="2" fill="#FFF"/>
-                <ellipse cx="35" cy="34" rx="3" ry="2" fill="#5C4033"/>
-                <path d="M60 22 C60 18, 66 18, 66 22 C66 26, 60 30, 60 30 C60 30, 54 26, 54 22 C54 18, 60 18, 60 22 Z" fill="#FFB6C1" stroke="#5C4033" stroke-width="2"/>
-                <path d="M75 15 Q85 12 95 20 Q105 25 102 38 Q100 45 90 44 Q80 43 78 30 Z" fill="#DDC09B" stroke="#5C4033" stroke-width="2.5"/>
-                <ellipse cx="80" cy="22" rx="4" ry="7" fill="#8B5E3C" transform="rotate(20 80 22)"/>
-                <circle cx="92" cy="28" r="2" fill="#5C4033"/>
-                <circle cx="101" cy="35" r="2.5" fill="#5C4033"/>
-            </svg>
+        <div class="brand">
+            <span class="brand-icon">🍚</span>
             <h1>飯飯都掂</h1>
         </div>
-        <div class="subtitle">panda & doggy's food map 🍚</div>
+        <div class="subtitle">私房美食地圖 ｜ 支援完整編輯與刪除</div>
     </header>
 
     <div class="container">
-        <input type="text" id="searchInput" class="search-box" placeholder="🔍 搜尋店名、招牌、提供者..." oninput="renderList()">
+        <!-- 搜尋列 -->
+        <input type="text" id="searchInput" class="search-box" placeholder="🔍 搜尋店名、招牌食物、提供者..." oninput="renderList()">
 
+        <!-- 標籤動態篩選器 -->
         <div class="filter-group">
             <div class="filter-title">📍 地區篩選</div>
             <div class="tags-scroll" id="districtFilter"></div>
@@ -448,38 +553,44 @@
             <div class="tags-scroll" id="categoryFilter"></div>
         </div>
 
-        <div id="restaurantList" class="restaurant-list">
-            <div class="empty-state">資料載入中...</div>
-        </div>
+        <!-- 餐廳列表區 -->
+        <div id="restaurantList" class="restaurant-list"></div>
     </div>
 
+    <!-- 懸浮按鈕：新增餐廳 -->
     <button class="fab" onclick="openAddModal()">
-        <span>➕</span> 新增餐廳
+        <span>➕</span> 新增口袋名單
     </button>
 
-    <!-- 詳情 Modal -->
+    <!-- 詳情與留言彈出視窗 Modal -->
     <div id="detailModal" class="modal-overlay" onclick="closeModalOnOverlay(event, 'detailModal')">
         <div class="modal-container">
             <button class="modal-close" onclick="closeModal('detailModal')">✕</button>
-            <div class="detail-header" style="padding-right:40px;">
+            <div class="detail-header">
                 <h2 id="modalTitle" class="detail-title"></h2>
                 <div id="modalStars" class="stars"></div>
-                <div id="modalTags" class="card-tags" style="margin-top: 8px;"></div>
+                <div id="modalRatingDesc" style="font-size: 0.85rem; font-weight: 700; color: #8C4254; margin-top: 4px;"></div>
+                <div id="modalTags" class="card-tags" style="margin-top: 10px;"></div>
+            </div>
+
+            <!-- 餐廳編輯與刪除快捷按鈕 -->
+            <div class="action-bar">
+                <button class="btn-action btn-edit-res" onclick="openEditRestaurantModal()">✏️ 編輯餐廳</button>
+                <button class="btn-action btn-del-res" onclick="deleteCurrentRestaurant()">🗑️ 刪除餐廳</button>
             </div>
 
             <div class="detail-section">
-                <div class="detail-section-title">📍 地址與地圖</div>
+                <div class="detail-section-title">📍 地址</div>
                 <p id="modalAddress" class="detail-text"></p>
-                <div id="modalMapBtnContainer"></div>
             </div>
 
             <div class="detail-section">
-                <div class="detail-section-title">✨ 招牌 Preview</div>
+                <div class="detail-section-title">✨ 招牌必點</div>
                 <p id="modalSignature" class="detail-text"></p>
             </div>
 
             <div class="detail-section">
-                <div class="detail-section-title">💚 推薦亮點</div>
+                <div class="detail-section-title">💚 好食原因</div>
                 <p id="modalPros" class="detail-text"></p>
             </div>
 
@@ -493,416 +604,533 @@
                 <p id="modalProvider" class="detail-text"></p>
             </div>
 
-            <!-- 朋友留言板 -->
-            <div class="detail-section">
-                <div class="detail-section-title">💬 朋友留言板</div>
-                <div id="commentsList" style="margin-bottom: 10px;"></div>
-                <div style="display: flex; gap: 6px; margin-top: 8px;">
-                    <input type="text" id="commentAuthor" class="form-input" placeholder="你的名字" style="flex: 1; padding: 6px 10px; font-size: 0.8rem;" required>
-                    <input type="text" id="commentText" class="form-input" placeholder="寫個留言..." style="flex: 2; padding: 6px 10px; font-size: 0.8rem;" required>
-                    <button class="tag-btn" onclick="addComment()">發送</button>
-                </div>
-            </div>
-
-            <div class="action-btns">
-                <button class="btn-action btn-edit" onclick="openEditModal()">✏️ 編輯</button>
-                <button class="btn-action btn-delete" onclick="deleteRestaurant()">🗑️ 刪除</button>
+            <!-- Firebase 多人留言板區塊 (帶有留言編輯與刪除) -->
+            <div class="detail-section" style="background-color: #F3EDE5;">
+                <div class="detail-section-title">💬 多人即時留言評論</div>
+                <div id="commentsList" style="margin-bottom: 12px; max-height: 180px; overflow-y: auto;"></div>
+                
+                <form id="commentForm" onsubmit="submitComment(event)" style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <input type="hidden" id="editCommentIndex" value="-1">
+                    <input type="text" id="commentUser" class="form-input" placeholder="你的名稱" style="flex: 1; min-width: 100px;" required>
+                    <input type="text" id="commentText" class="form-input" placeholder="寫低你的食後感..." style="flex: 2; min-width: 150px;" required>
+                    <button type="submit" id="commentSubmitBtn" class="tag-btn" style="background: var(--accent-pink-dark); color: white; white-space: nowrap; flex: 0.5;">留言</button>
+                </form>
             </div>
         </div>
     </div>
 
-    <!-- 新增/編輯 Modal -->
+    <!-- 新增 / 編輯餐廳彈出視窗 Modal -->
     <div id="addModal" class="modal-overlay" onclick="closeModalOnOverlay(event, 'addModal')">
         <div class="modal-container">
             <button class="modal-close" onclick="closeModal('addModal')">✕</button>
-            <h2 id="formModalTitle" class="detail-title" style="margin-bottom: 16px;">✍️ 新增口袋餐廳</h2>
+            <h2 id="formModalTitle" class="detail-title" style="margin-bottom: 20px;">✍️ 新增口袋餐廳</h2>
 
-            <form id="addForm" onsubmit="handleFormSubmit(event)">
-                <input type="hidden" id="editId">
+            <form id="addForm" onsubmit="saveRestaurant(event)">
+                <input type="hidden" id="editRestaurantId" value="">
+                
                 <div class="form-group">
                     <label class="form-label">店名 *</label>
-                    <input type="text" id="addName" class="form-input" required>
+                    <input type="text" id="addName" class="form-input" placeholder="例如: Bakehouse" required>
                 </div>
+
                 <div class="form-group">
                     <label class="form-label">星數評分 *</label>
                     <select id="addRating" class="form-select">
-                        <option value="5">⭐⭐⭐⭐⭐ (5星 - 有權再吃!!!!)</option>
-                        <option value="4">⭐⭐⭐⭐ (4星 - 好味!!!)</option>
-                        <option value="3">⭐⭐⭐ (3星 - OK啦)</option>
-                        <option value="2">⭐⭐ (2星 - 少少難食)</option>
-                        <option value="1">⭐ (1星 - 不吃後悔，吃了更後悔)</option>
+                        <option value="5">⭐⭐⭐⭐⭐ 5星 - 有權再吃!!!!</option>
+                        <option value="4" selected>⭐⭐⭐⭐ 4星 - 好味!!!</option>
+                        <option value="3">⭐⭐⭐ 3星 - OK啦</option>
+                        <option value="2">⭐⭐ 2星 - 少少難食</option>
+                        <option value="1">⭐ 1星 - 不吃後悔，吃了更後悔</option>
                     </select>
                 </div>
-                
-                <!-- 預設地區標籤點擊多選 -->
+
+                <!-- 地區雙層下拉選單 + 轉 Tag 區 -->
                 <div class="form-group">
-                    <label class="form-label">選擇地區 (可多選) *</label>
-                    <div class="tags-scroll" id="formDistrictTags" style="margin-top: 4px;"></div>
+                    <label class="form-label">選擇地區 (支援多選，香港18區) *</label>
+                    <div style="display: flex; gap: 8px; margin-bottom: 6px;">
+                        <select id="selectRegion" class="form-select" onchange="updateSubDistricts()">
+                            <option value="">-- 選擇大區 --</option>
+                            <option value="港島區">港島區</option>
+                            <option value="九龍區">九龍區</option>
+                            <option value="新界區">新界區</option>
+                            <option value="外地旅遊">外地旅遊</option>
+                        </select>
+                        <select id="selectSubDistrict" class="form-select">
+                            <option value="">-- 先選大區 --</option>
+                        </select>
+                        <button type="button" class="tag-btn" onclick="addDistrictTag()" style="background: #EFE8DE; border: 2px solid #5C4033; font-weight: bold;">加入</button>
+                    </div>
+                    <div id="selectedDistrictsContainer" class="selected-tags-container"></div>
                 </div>
 
-                <!-- 預設種類標籤點擊多選 -->
+                <!-- 種類自由新增 + 轉 Tag 區 -->
                 <div class="form-group">
-                    <label class="form-label">選擇種類 (可多選) *</label>
-                    <div class="tags-scroll" id="formCategoryTags" style="margin-top: 4px;"></div>
+                    <label class="form-label">選擇/自訂美食種類 (支援多選) *</label>
+                    <div style="display: flex; gap: 8px; margin-bottom: 6px;">
+                        <input type="text" id="inputCategory" class="form-input" placeholder="輸入或選下方標籤">
+                        <button type="button" class="tag-btn" onclick="addCategoryTagCustom()" style="background: #EFE8DE; border: 2px solid #5C4033; font-weight: bold;">新增</button>
+                    </div>
+                    <div class="tags-scroll" style="margin-bottom: 6px;">
+                        <button type="button" class="tag-btn" onclick="quickAddCategory('地道港味')">地道港味</button>
+                        <button type="button" class="tag-btn" onclick="quickAddCategory('茶餐廳')">茶餐廳</button>
+                        <button type="button" class="tag-btn" onclick="quickAddCategory('甜點/烘焙')">甜點/烘焙</button>
+                        <button type="button" class="tag-btn" onclick="quickAddCategory('咖啡/輕食')">咖啡/輕食</button>
+                        <button type="button" class="tag-btn" onclick="quickAddCategory('日韓台料理')">日韓台料理</button>
+                        <button type="button" class="tag-btn" onclick="quickAddCategory('Bistro/晚餐')">Bistro/晚餐</button>
+                    </div>
+                    <div id="selectedCategoriesContainer" class="selected-tags-container"></div>
                 </div>
 
                 <div class="form-group">
-                    <label class="form-label">招牌 Preview *</label>
-                    <input type="text" id="addSignature" class="form-input" placeholder="例如: 酸種蛋撻" required>
+                    <label class="form-label">招牌必點 (一句話 Preview) *</label>
+                    <input type="text" id="addSignature" class="form-input" placeholder="例如: 酸種蛋撻、可頌" required>
                 </div>
+
                 <div class="form-group">
                     <label class="form-label">地址</label>
-                    <input type="text" id="addAddress" class="form-input">
+                    <input type="text" id="addAddress" class="form-input" placeholder="例如: 中環士丹利街14號">
                 </div>
+
                 <div class="form-group">
-                    <label class="form-label">Google Maps 連結</label>
-                    <input type="url" id="addMapLink" class="form-input" placeholder="https://maps.app.goo.gl/...">
+                    <label class="form-label">好食原因 / 推薦點</label>
+                    <textarea id="addPros" class="form-textarea" rows="2" placeholder="例如: 皮超酥脆，牛油香十足"></textarea>
                 </div>
+
                 <div class="form-group">
-                    <label class="form-label">推薦亮點</label>
-                    <textarea id="addPros" class="form-textarea" rows="2"></textarea>
+                    <label class="form-label">避雷注意 / 缺點</label>
+                    <textarea id="addCons" class="form-textarea" rows="2" placeholder="例如: 假日排隊半小時以上"></textarea>
                 </div>
+
                 <div class="form-group">
-                    <label class="form-label">避雷注意</label>
-                    <textarea id="addCons" class="form-textarea" rows="2"></textarea>
+                    <label class="form-label">提供者 / 資訊來源 *</label>
+                    <input type="text" id="addProvider" class="form-input" placeholder="例如: 脆友 @foodie_hk" required>
                 </div>
-                <div class="form-group">
-                    <label class="form-label">提供者 *</label>
-                    <input type="text" id="addProvider" class="form-input" placeholder="例如: 朋友阿強" required>
-                </div>
-                <button type="submit" id="submitBtn" class="btn-submit">💾 儲存餐廳</button>
+
+                <button type="submit" id="formSubmitBtn" class="btn-submit">💾 儲存到口袋名單</button>
             </form>
         </div>
     </div>
 
-    <!-- Firebase SDK 引入與初始化 -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
-        import { getDatabase, ref, set, get, remove, push, child } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyA4o3_qufWsS-8r4cD2YBCXPA4K5ulrdV0",
-            authDomain: "fanfan-dou-dim.firebaseapp.com",
-            databaseURL: "https://fanfan-dou-dim-default-rtdb.firebaseio.com",
-            projectId: "fanfan-dou-dim",
-            storageBucket: "fanfan-dou-dim.firebasestorage.app",
-            messagingSenderId: "1081553811639",
-            appId: "1:1081553811639:web:43a378417da104aeae7532"
+    <script>
+        const hkDistrictsMap = {
+            "港島區": ["中環", "灣仔", "東區", "南區"],
+            "九龍區": ["油尖旺", "深水埗", "九龍城", "黃大仙", "觀塘"],
+            "新界區": ["葵青", "荃灣", "屯門", "元朗", "北區", "大埔", "西貢", "沙田", "離島"],
+            "外地旅遊": ["日本", "台灣", "韓國", "泰國", "其他地區"]
         };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
+        const ratingDescriptions = {
+            5: "5星：有權再吃!!!!",
+            4: "4星：好味!!!",
+            3: "3星：OK啦",
+            2: "2星：少少難食",
+            1: "1星：不吃後悔，吃了更後悔"
+        };
 
-        window.db = db;
-        window.ref = ref;
-        window.set = set;
-        window.get = get;
-        window.remove = remove;
-        window.push = push;
-        window.child = child;
+        let tempSelectedDistricts = [];
+        let tempSelectedCategories = [];
+        let currentActiveDetailId = null;
 
-        window.loadRestaurants();
-    </script>
-
-    <script>
-        const rawDistricts = ["港島區-中環", "港島區-灣仔", "九龍區-尖沙咀", "九龍區-旺角", "九龍區-觀塘", "新界區-上水", "新界區-沙田", "新界區-屯門", "外地旅遊"];
-        const rawCategories = ["地道港味", "茶餐廳", "甜點/烘焙", "咖啡/輕食", "日韓台料理", "Bistro/晚餐", "外賣掃街"];
+        const defaultRestaurants = [
+            {
+                id: 1,
+                name: "Bakehouse",
+                rating: 5,
+                districts: ["港島區-中環", "港島區-灣仔"],
+                categories: ["甜點/烘焙", "咖啡/輕食"],
+                signature: "酸種蛋撻、可頌",
+                address: "中環士丹利街14號地下",
+                pros: "皮極度酥脆，蛋漿香濃不會過甜！",
+                cons: "熱門時段常要排隊15-20分鐘。",
+                provider: "Threads 脆友推薦",
+                comments: [
+                    { user: "阿明", text: "真係好好食，次次去都排隊！" }
+                ]
+            }
+        ];
 
         let activeDistrict = "全部";
         let activeCategory = "全部";
-        let restaurantsData = {};
-        let currentSelectedId = null;
+        let restaurants = [];
 
-        // 表單中被勾選的暫存陣列
-        let selectedFormDistricts = [];
-        let selectedFormCategories = [];
-
-        function initFilters() {
-            const dOptions = ["全部", ...rawDistricts];
-            document.getElementById('districtFilter').innerHTML = dOptions.map(d => 
-                `<button class="tag-btn ${d === activeDistrict ? 'active' : ''}" onclick="setDistrict('${d}')">${d}</button>`
-            ).join('');
-
-            const cOptions = ["全部", ...rawCategories];
-            document.getElementById('categoryFilter').innerHTML = cOptions.map(c => 
-                `<button class="tag-btn ${c === activeCategory ? 'active' : ''}" onclick="setCategory('${c}')">${c}</button>`
-            ).join('');
-        }
-
-        // 初始化表單內的點擊標籤
-        function renderFormTagSelectors() {
-            document.getElementById('formDistrictTags').innerHTML = rawDistricts.map(d => {
-                const isActive = selectedFormDistricts.includes(d);
-                return `<button type="button" class="tag-btn ${isActive ? 'active' : ''}" onclick="toggleFormDistrict('${d}')">${d}</button>`;
-            }).join('');
-
-            document.getElementById('formCategoryTags').innerHTML = rawCategories.map(c => {
-                const isActive = selectedFormCategories.includes(c);
-                return `<button type="button" class="tag-btn ${isActive ? 'active' : ''}" onclick="toggleFormCategory('${c}')">${c}</button>`;
-            }).join('');
-        }
-
-        window.toggleFormDistrict = function(d) {
-            if (selectedFormDistricts.includes(d)) {
-                selectedFormDistricts = selectedFormDistricts.filter(item => item !== d);
+        function init() {
+            const saved = localStorage.getItem('fan_fan_restaurants_v3');
+            if (saved) {
+                try {
+                    restaurants = JSON.parse(saved);
+                } catch(e) {
+                    restaurants = defaultRestaurants;
+                }
             } else {
-                selectedFormDistricts.push(d);
+                restaurants = defaultRestaurants;
+                localStorage.setItem('fan_fan_restaurants_v3', JSON.stringify(restaurants));
             }
-            renderFormTagSelectors();
-        }
 
-        window.toggleFormCategory = function(c) {
-            if (selectedFormCategories.includes(c)) {
-                selectedFormCategories = selectedFormCategories.filter(item => item !== c);
-            } else {
-                selectedFormCategories.push(c);
-            }
-            renderFormTagSelectors();
-        }
-
-        window.setDistrict = function(d) {
-            activeDistrict = d;
-            initFilters();
+            renderFilterButtons();
             renderList();
         }
 
-        window.setCategory = function(c) {
-            activeCategory = c;
-            initFilters();
-            renderList();
-        }
-
-        window.loadRestaurants = function() {
-            const dbRef = window.ref(window.db);
-            window.get(window.child(dbRef, 'restaurants')).then((snapshot) => {
-                if (snapshot.exists()) {
-                    restaurantsData = snapshot.val();
-                } else {
-                    restaurantsData = {};
-                }
-                initFilters();
-                renderList();
-            }).catch((error) => {
-                console.error(error);
-                document.getElementById('restaurantList').innerHTML = `<div class="empty-state">連線雲端資料庫失敗，請檢查設定。</div>`;
-            });
-        }
-
-        function getStarRatingInfo(score) {
-            const num = parseInt(score) || 3;
-            const stars = '★'.repeat(num);
-            const descriptions = {
-                5: "5星 - 有權再吃!!!!",
-                4: "4星 - 好味!!!",
-                3: "3星 - OK啦",
-                2: "2星 - 少少難食",
-                1: "1星 - 不吃後悔，吃了更後悔"
-            };
-            return { stars, text: descriptions[num] || "OK啦" };
-        }
-
-        window.renderList = function() {
-            const query = document.getElementById('searchInput').value.trim().toLowerCase();
-            const listContainer = document.getElementById('restaurantList');
-            const keys = Object.keys(restaurantsData);
-
-            if (keys.length === 0) {
-                listContainer.innerHTML = `<div class="empty-state">🥣 還沒有口袋餐廳喔！點右下角 ➕ 新增吧～</div>`;
-                return;
-            }
-
-            let html = '';
-            keys.forEach(id => {
-                const item = restaurantsData[id];
-                const matchD = (activeDistrict === "全部") || (item.districts && item.districts.some(d => d.includes(activeDistrict)));
-                const matchC = (activeCategory === "全部") || (item.categories && item.categories.some(c => c.includes(activeCategory)));
-                const matchS = !query || 
-                    item.name.toLowerCase().includes(query) ||
-                    item.signature.toLowerCase().includes(query) ||
-                    item.provider.toLowerCase().includes(query);
-
-                if (matchD && matchC && matchS) {
-                    const starInfo = getStarRatingInfo(item.rating);
-                    html += `
-                        <div class="card" onclick="openDetailModal('${id}')">
-                            <div class="card-header">
-                                <h3 class="card-title">${item.name}</h3>
-                                <div class="stars">${starInfo.stars}</div>
-                            </div>
-                            <div class="card-tags">
-                                ${(item.districts || []).map(d => `<span class="tag-badge">📍 ${d}</span>`).join('')}
-                                ${(item.categories || []).map(c => `<span class="tag-badge">🍴 ${c}</span>`).join('')}
-                            </div>
-                            <div class="card-preview">
-                                <strong>✨ 招牌:</strong> ${item.signature}
-                            </div>
-                            <div class="provider-tag">👤 ${item.provider}</div>
-                        </div>
-                    `;
-                }
-            });
-
-            listContainer.innerHTML = html || `<div class="empty-state">找不到符合條件的餐廳喔！</div>`;
-        }
-
-        window.openDetailModal = function(id) {
-            currentSelectedId = id;
-            const item = restaurantsData[id];
-            if (!item) return;
-
-            const starInfo = getStarRatingInfo(item.rating);
-            document.getElementById('modalTitle').innerText = item.name;
-            document.getElementById('modalStars').innerText = `${starInfo.stars} (${starInfo.text})`;
-            document.getElementById('modalTags').innerHTML = [
-                ...(item.districts || []).map(d => `<span class="tag-badge">📍 ${d}</span>`),
-                ...(item.categories || []).map(c => `<span class="tag-badge">🍴 ${c}</span>`)
-            ].join(' ');
-
-            document.getElementById('modalAddress').innerText = item.address || "未填寫地址";
+        // 下拉聯動
+        function updateSubDistricts() {
+            const region = document.getElementById('selectRegion').value;
+            const subSelect = document.getElementById('selectSubDistrict');
+            subSelect.innerHTML = '<option value="">-- 選擇細區 --</option>';
             
-            const mapContainer = document.getElementById('modalMapBtnContainer');
-            if (item.mapLink) {
-                mapContainer.innerHTML = `<a href="${item.mapLink}" target="_blank" class="map-link-btn">🗺️ 在 Google Maps 中打開</a>`;
-            } else {
-                mapContainer.innerHTML = '';
-            }
-
-            document.getElementById('modalSignature').innerText = item.signature;
-            document.getElementById('modalPros').innerText = item.pros || "無";
-            document.getElementById('modalCons').innerText = item.cons || "無 (表現良好)";
-            document.getElementById('modalProvider').innerText = item.provider;
-
-            renderComments(item.comments || {});
-            document.getElementById('detailModal').style.display = 'flex';
-        }
-
-        window.renderComments = function(commentsObj) {
-            const cList = document.getElementById('commentsList');
-            const keys = Object.keys(commentsObj || {});
-            if (keys.length === 0) {
-                cList.innerHTML = `<div style="font-size:0.8rem; color:#A89F91;">暫無留言，來當第一個留言的朋友吧！</div>`;
-                return;
-            }
-            cList.innerHTML = keys.map(k => {
-                const c = commentsObj[k];
-                return `<div class="comment-item"><span class="comment-author">${c.author}：</span>${c.text}</div>`;
-            }).join('');
-        }
-
-        window.addComment = function() {
-            const author = document.getElementById('commentAuthor').value.trim();
-            const text = document.getElementById('commentText').value.trim();
-            if (!author || !text) {
-                alert("請填寫「你的名字」與「留言內容」！");
-                return;
-            }
-
-            const commentRef = window.ref(window.db, `restaurants/${currentSelectedId}/comments`);
-            window.push(commentRef, { author, text }).then(() => {
-                document.getElementById('commentText').value = '';
-                window.loadRestaurants();
-                setTimeout(() => openDetailModal(currentSelectedId), 500);
-            });
-        }
-
-        window.openAddModal = function() {
-            document.getElementById('formModalTitle').innerText = "✍️ 新增口袋餐廳";
-            document.getElementById('addForm').reset();
-            document.getElementById('editId').value = "";
-            selectedFormDistricts = [];
-            selectedFormCategories = [];
-            renderFormTagSelectors();
-            document.getElementById('addModal').style.display = 'flex';
-        }
-
-        window.openEditModal = function() {
-            const item = restaurantsData[currentSelectedId];
-            if (!item) return;
-
-            document.getElementById('formModalTitle').innerText = "✏️ 編輯口袋餐廳";
-            document.getElementById('editId').value = currentSelectedId;
-            document.getElementById('addName').value = item.name;
-            document.getElementById('addRating').value = item.rating || 3;
-            
-            selectedFormDistricts = [...(item.districts || [])];
-            selectedFormCategories = [...(item.categories || [])];
-            renderFormTagSelectors();
-
-            document.getElementById('addSignature').value = item.signature;
-            document.getElementById('addAddress').value = item.address || "";
-            document.getElementById('addMapLink').value = item.mapLink || "";
-            document.getElementById('addPros').value = item.pros || "";
-            document.getElementById('addCons').value = item.cons || "";
-            document.getElementById('addProvider').value = item.provider;
-
-            closeModal('detailModal');
-            document.getElementById('addModal').style.display = 'flex';
-        }
-
-        window.handleFormSubmit = function(e) {
-            e.preventDefault();
-
-            if (selectedFormDistricts.length === 0) {
-                alert("請至少選擇一個地區標籤！");
-                return;
-            }
-            if (selectedFormCategories.length === 0) {
-                alert("請至少選擇一個種類標籤！");
-                return;
-            }
-
-            const editId = document.getElementById('editId').value;
-            const id = editId ? editId : 'r_' + Date.now();
-
-            const item = {
-                name: document.getElementById('addName').value.trim(),
-                rating: parseInt(document.getElementById('addRating').value),
-                districts: selectedFormDistricts,
-                categories: selectedFormCategories,
-                signature: document.getElementById('addSignature').value.trim(),
-                address: document.getElementById('addAddress').value.trim(),
-                mapLink: document.getElementById('addMapLink').value.trim(),
-                pros: document.getElementById('addPros').value.trim(),
-                cons: document.getElementById('addCons').value.trim(),
-                provider: document.getElementById('addProvider').value.trim(),
-                comments: restaurantsData[id] ? (restaurantsData[id].comments || {}) : {}
-            };
-
-            const submitBtn = document.getElementById('submitBtn');
-            submitBtn.innerText = "儲存中...";
-            submitBtn.disabled = true;
-
-            window.set(window.ref(window.db, 'restaurants/' + id), item).then(() => {
-                submitBtn.innerText = "💾 儲存餐廳";
-                submitBtn.disabled = false;
-                closeModal('addModal');
-                window.loadRestaurants();
-                alert("🎉 儲存成功！");
-            }).catch((error) => {
-                submitBtn.innerText = "💾 儲存餐廳";
-                submitBtn.disabled = false;
-                console.error(error);
-                alert("儲存失敗，請檢查 Firebase 資料庫權限設定。\n錯誤訊息: " + error.message);
-            });
-        }
-
-        window.deleteRestaurant = function() {
-            if (confirm("確定要刪除這間餐廳嗎？")) {
-                window.remove(window.ref(window.db, 'restaurants/' + currentSelectedId)).then(() => {
-                    closeModal('detailModal');
-                    window.loadRestaurants();
-                    alert("🗑️ 已刪除");
+            if (region && hkDistrictsMap[region]) {
+                hkDistrictsMap[region].forEach(sub => {
+                    subSelect.innerHTML += `<option value="${region}-${sub}">${sub}</option>`;
                 });
             }
         }
 
-        window.closeModal = function(modalId) {
+        function addDistrictTag() {
+            const region = document.getElementById('selectRegion').value;
+            const subVal = document.getElementById('selectSubDistrict').value;
+            if (!region || !subVal) return;
+
+            if (!tempSelectedDistricts.includes(subVal)) {
+                tempSelectedDistricts.push(subVal);
+                renderSelectedDistricts();
+            }
+        }
+
+        function removeDistrictTag(tag) {
+            tempSelectedDistricts = tempSelectedDistricts.filter(t => t !== tag);
+            renderSelectedDistricts();
+        }
+
+        function renderSelectedDistricts() {
+            const container = document.getElementById('selectedDistrictsContainer');
+            container.innerHTML = tempSelectedDistricts.map(d => `
+                <span class="selected-tag-item">📍 ${d} <button type="button" onclick="removeDistrictTag('${d}')">✕</button></span>
+            `).join('');
+        }
+
+        function quickAddCategory(cat) {
+            if (!tempSelectedCategories.includes(cat)) {
+                tempSelectedCategories.push(cat);
+                renderSelectedCategories();
+            }
+        }
+
+        function addCategoryTagCustom() {
+            const input = document.getElementById('inputCategory');
+            const val = input.value.trim();
+            if (val && !tempSelectedCategories.includes(val)) {
+                tempSelectedCategories.push(val);
+                input.value = '';
+                renderSelectedCategories();
+            }
+        }
+
+        function removeCategoryTag(tag) {
+            tempSelectedCategories = tempSelectedCategories.filter(t => t !== tag);
+            renderSelectedCategories();
+        }
+
+        function renderSelectedCategories() {
+            const container = document.getElementById('selectedCategoriesContainer');
+            container.innerHTML = tempSelectedCategories.map(c => `
+                <span class="selected-tag-item">🍴 ${c} <button type="button" onclick="removeCategoryTag('${c}')">✕</button></span>
+            `).join('');
+        }
+
+        // 篩選按鈕
+        const presetDistricts = ["全部", "港島區", "九龍區", "新界區", "外地旅遊"];
+        const presetCategories = ["全部", "地道港味", "茶餐廳", "甜點/烘焙", "咖啡/輕食", "日韓台料理", "Bistro/晚餐"];
+
+        function renderFilterButtons() {
+            const dContainer = document.getElementById('districtFilter');
+            dContainer.innerHTML = presetDistricts.map(d => 
+                `<button class="tag-btn ${d === activeDistrict ? 'active' : ''}" onclick="setDistrict('${d}')">${d}</button>`
+            ).join('');
+
+            const cContainer = document.getElementById('categoryFilter');
+            cContainer.innerHTML = presetCategories.map(c => 
+                `<button class="tag-btn ${c === activeCategory ? 'active' : ''}" onclick="setCategory('${c}')">${c}</button>`
+            ).join('');
+        }
+
+        function setDistrict(d) {
+            activeDistrict = d;
+            renderFilterButtons();
+            renderList();
+        }
+
+        function setCategory(c) {
+            activeCategory = c;
+            renderFilterButtons();
+            renderList();
+        }
+
+        function getStarRating(score) {
+            return '★'.repeat(score);
+        }
+
+        function renderList() {
+            const query = document.getElementById('searchInput').value.trim().toLowerCase();
+            const listContainer = document.getElementById('restaurantList');
+
+            const filtered = restaurants.filter(item => {
+                const matchDistrict = (activeDistrict === "全部") || item.districts.some(d => d.includes(activeDistrict));
+                const matchCategory = (activeCategory === "全部") || item.categories.some(c => c.includes(activeCategory));
+                const matchSearch = !query || 
+                    item.name.toLowerCase().includes(query) ||
+                    item.signature.toLowerCase().includes(query) ||
+                    item.provider.toLowerCase().includes(query);
+
+                return matchDistrict && matchCategory && matchSearch;
+            });
+
+            if (filtered.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🥣</div>
+                        <p>搵唔到符合嘅口袋餐廳喔～<br>點右下角 ➕ 新增一個啦！</p>
+                    </div>
+                `;
+                return;
+            }
+
+            listContainer.innerHTML = filtered.map(item => `
+                <div class="card" onclick="openDetailModal(${item.id})">
+                    <div class="card-header">
+                        <h3 class="card-title">${item.name}</h3>
+                        <div class="stars">${getStarRating(item.rating)}</div>
+                    </div>
+                    <div class="card-tags">
+                        ${item.districts.map(d => `<span class="tag-badge tag-district">📍 ${d}</span>`).join('')}
+                        ${item.categories.map(c => `<span class="tag-badge tag-category">🍴 ${c}</span>`).join('')}
+                    </div>
+                    <div class="card-preview">
+                        <strong>✨ 必食 Preview:</strong> ${item.signature}
+                    </div>
+                    <div class="provider-tag">
+                        👤 提供者: ${item.provider}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 詳情 Modal
+        function openDetailModal(id) {
+            currentActiveDetailId = id;
+            const item = restaurants.find(r => r.id === id);
+            if (!item) return;
+
+            document.getElementById('modalTitle').innerText = item.name;
+            document.getElementById('modalStars').innerText = getStarRating(item.rating);
+            document.getElementById('modalRatingDesc').innerText = ratingDescriptions[item.rating] || "";
+            
+            const tagsHtml = [
+                ...item.districts.map(d => `<span class="tag-badge tag-district">📍 ${d}</span>`),
+                ...item.categories.map(c => `<span class="tag-badge tag-category">🍴 ${c}</span>`)
+            ].join(' ');
+            document.getElementById('modalTags').innerHTML = tagsHtml;
+
+            document.getElementById('modalAddress').innerText = item.address || "未有詳細地址";
+            document.getElementById('modalSignature').innerText = item.signature;
+            document.getElementById('modalPros').innerText = item.pros || "無備註";
+            document.getElementById('modalCons').innerText = item.cons || "無備註";
+            document.getElementById('modalProvider').innerText = item.provider;
+
+            renderComments(item.comments || []);
+            document.getElementById('detailModal').style.display = 'flex';
+        }
+
+        // 刪除餐廳
+        function deleteCurrentRestaurant() {
+            if (confirm("確定要刪除這間口袋餐廳嗎？此動作無法復原！")) {
+                restaurants = restaurants.filter(r => r.id !== currentActiveDetailId);
+                localStorage.setItem('fan_fan_restaurants_v3', JSON.stringify(restaurants));
+                closeModal('detailModal');
+                renderList();
+                alert("🗑️ 已成功刪除該餐廳。");
+            }
+        }
+
+        // 打開編輯餐廳 Modal
+        function openEditRestaurantModal() {
+            const item = restaurants.find(r => r.id === currentActiveDetailId);
+            if (!item) return;
+
+            closeModal('detailModal');
+
+            document.getElementById('formModalTitle').innerText = "✏️ 編輯口袋餐廳";
+            document.getElementById('formSubmitBtn').innerText = "💾 儲存修改";
+            document.getElementById('editRestaurantId').value = item.id;
+
+            document.getElementById('addName').value = item.name;
+            document.getElementById('addRating').value = item.rating;
+            document.getElementById('addSignature').value = item.signature;
+            document.getElementById('addAddress').value = item.address || "";
+            document.getElementById('addPros').value = item.pros || "";
+            document.getElementById('addCons').value = item.cons || "";
+            document.getElementById('addProvider').value = item.provider;
+
+            tempSelectedDistricts = [...item.districts];
+            tempSelectedCategories = [...item.categories];
+            renderSelectedDistricts();
+            renderSelectedCategories();
+
+            document.getElementById('addModal').style.display = 'flex';
+        }
+
+        // 留言管理 (支援新增、編輯、刪除)
+        function renderComments(comments) {
+            const container = document.getElementById('commentsList');
+            if (!comments || comments.length === 0) {
+                container.innerHTML = `<div style="font-size: 0.82rem; color: #8C8C8C;">暫時未有留言，快啲留低你嘅食後感啦！</div>`;
+                return;
+            }
+            container.innerHTML = comments.map((c, index) => `
+                <div class="comment-item">
+                    <div>
+                        <div class="comment-user">${c.user}</div>
+                        <div style="font-size: 0.88rem; color: #4A4A4A;">${c.text}</div>
+                    </div>
+                    <div class="comment-actions">
+                        <button class="comment-action-btn" onclick="editComment(${index})">✏️</button>
+                        <button class="comment-action-btn" onclick="deleteComment(${index})">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function submitComment(e) {
+            e.preventDefault();
+            const user = document.getElementById('commentUser').value.trim();
+            const text = document.getElementById('commentText').value.trim();
+            const editIndex = parseInt(document.getElementById('editCommentIndex').value);
+            if (!user || !text) return;
+
+            const item = restaurants.find(r => r.id === currentActiveDetailId);
+            if (item) {
+                if (!item.comments) item.comments = [];
+
+                if (editIndex > -1) {
+                    // 編輯現有留言
+                    item.comments[editIndex] = { user, text };
+                    document.getElementById('editCommentIndex').value = "-1";
+                    document.getElementById('commentSubmitBtn').innerText = "留言";
+                } else {
+                    // 新增留言
+                    item.comments.push({ user, text });
+                }
+
+                localStorage.setItem('fan_fan_restaurants_v3', JSON.stringify(restaurants));
+                document.getElementById('commentText').value = '';
+                renderComments(item.comments);
+            }
+        }
+
+        function editComment(index) {
+            const item = restaurants.find(r => r.id === currentActiveDetailId);
+            if (item && item.comments[index]) {
+                const target = item.comments[index];
+                document.getElementById('commentUser').value = target.user;
+                document.getElementById('commentText').value = target.text;
+                document.getElementById('editCommentIndex').value = index;
+                document.getElementById('commentSubmitBtn').innerText = "修改";
+            }
+        }
+
+        function deleteComment(index) {
+            if (confirm("確定要刪除這則留言嗎？")) {
+                const item = restaurants.find(r => r.id === currentActiveDetailId);
+                if (item && item.comments) {
+                    item.comments.splice(index, 1);
+                    localStorage.setItem('fan_fan_restaurants_v3', JSON.stringify(restaurants));
+                    renderComments(item.comments);
+                }
+            }
+        }
+
+        function openAddModal() {
+            document.getElementById('formModalTitle').innerText = "✍️ 新增口袋餐廳";
+            document.getElementById('formSubmitBtn').innerText = "💾 儲存到口袋名單";
+            document.getElementById('editRestaurantId').value = "";
+            document.getElementById('addForm').reset();
+
+            tempSelectedDistricts = [];
+            tempSelectedCategories = [];
+            renderSelectedDistricts();
+            renderSelectedCategories();
+            document.getElementById('addModal').style.display = 'flex';
+        }
+
+        function closeModal(modalId) {
             document.getElementById(modalId).style.display = 'none';
         }
 
-        window.closeModalOnOverlay = function(e, modalId) {
-            if (e.target.id === modalId) closeModal(modalId);
+        function closeModalOnOverlay(e, modalId) {
+            if (e.target.id === modalId) {
+                closeModal(modalId);
+            }
         }
+
+        function saveRestaurant(e) {
+            e.preventDefault();
+
+            const editId = document.getElementById('editRestaurantId').value;
+            const name = document.getElementById('addName').value.trim();
+            const rating = parseInt(document.getElementById('addRating').value);
+            const signature = document.getElementById('addSignature').value.trim();
+            const address = document.getElementById('addAddress').value.trim();
+            const pros = document.getElementById('addPros').value.trim();
+            const cons = document.getElementById('addCons').value.trim();
+            const provider = document.getElementById('addProvider').value.trim();
+
+            if (tempSelectedDistricts.length === 0) {
+                alert("請至少選擇一個地區標籤！");
+                return;
+            }
+            if (tempSelectedCategories.length === 0) {
+                alert("請至少選擇或新增一個美食種類標籤！");
+                return;
+            }
+
+            if (editId) {
+                // 編輯更新
+                const item = restaurants.find(r => r.id == editId);
+                if (item) {
+                    item.name = name;
+                    item.rating = rating;
+                    item.districts = [...tempSelectedDistricts];
+                    item.categories = [...tempSelectedCategories];
+                    item.signature = signature;
+                    item.address = address;
+                    item.pros = pros;
+                    item.cons = cons;
+                    item.provider = provider;
+                }
+                alert(`✨ 已成功更新「${name}」的資料！`);
+            } else {
+                // 新增
+                const newItem = {
+                    id: Date.now(),
+                    name,
+                    rating,
+                    districts: [...tempSelectedDistricts],
+                    categories: [...tempSelectedCategories],
+                    signature,
+                    address,
+                    pros,
+                    cons,
+                    provider,
+                    comments: []
+                };
+                restaurants.unshift(newItem);
+                alert(`🎉 已成功將「${name}」加到口袋名單！`);
+            }
+
+            localStorage.setItem('fan_fan_restaurants_v3', JSON.stringify(restaurants));
+            closeModal('addModal');
+            renderList();
+        }
+
+        window.onload = init;
     </script>
 </body>
 </html>
+```[cite: 2]
