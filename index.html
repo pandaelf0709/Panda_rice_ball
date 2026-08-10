@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="飯飯都掂">
+    <title>飯飯都掂 🍚 - 私人美食地圖</title>
+    <!-- Google Fonts 圓體字 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #FAF6F0;
+            --card-bg: #FFFFFF;
+            --text-main: #4A4A4A;
+            --text-muted: #8C8C8C;
+            --accent-pink: #FFD1DC;
+            --accent-pink-dark: #E5A3B3;
+            --accent-yellow: #FFEAA7;
+            --accent-green: #D1E8E2;
+            --accent-blue: #D4E6F1;
+            --accent-purple: #E8DAEF;
+            --star-color: #FFC048;
+            --border-radius-lg: 20px;
+            --border-radius-sm: 12px;
+            --shadow-soft: 0 8px 20px rgba(180, 160, 140, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'M PLUS Rounded 1c', 'Noto Sans TC', -apple-system, sans-serif;
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            padding-bottom: 90px;
+            line-height: 1.6;
+        }
+
+        /* 頂部 Header */
+        header {
+            background-color: rgba(250, 246, 240, 0.92);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 16px 20px 12px;
+            border-bottom: 2px dashed #EFE6DC;
+            text-align: center;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .brand-icon {
+            font-size: 2rem;
+            animation: bounce 2s infinite ease-in-out;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        h1 {
+            font-size: 1.65rem;
+            font-weight: 800;
+            margin: 0;
+            color: #5C4033;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+            font-weight: 500;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+
+        /* 搜尋與篩選器 */
+        .search-box {
+            width: 100%;
+            background: var(--card-bg);
+            border: 2px solid #EFE6DC;
+            padding: 12px 18px;
+            border-radius: 25px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            outline: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            transition: all 0.2s ease;
+            margin-bottom: 14px;
+        }
+
+        .search-box:focus {
+            border-color: var(--accent-pink-dark);
+            box-shadow: 0 4px 12px rgba(229, 163, 179, 0.25);
+        }
+
+        .filter-group {
+            margin-bottom: 18px;
+        }
+
+        .filter-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #7A6055;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .tags-scroll {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tag-btn {
+            background: #EFE8DE;
+            color: #6B5B52;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            font-family: inherit;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tag-btn.active {
+            background: var(--accent-pink-dark);
+            color: #FFFFFF;
+            transform: scale(1.03);
+            box-shadow: 0 3px 8px rgba(229, 163, 179, 0.4);
+        }
+
+        /* 餐廳列表卡片 (ListView) */
+        .restaurant-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius-lg);
+            padding: 18px;
+            box-shadow: var(--shadow-soft);
+            border: 2px solid #F3EDE5;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:active {
+            transform: scale(0.98);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #3D2C28;
+            margin: 0;
+        }
+
+        .stars {
+            color: var(--star-color);
+            font-size: 0.95rem;
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        .tag-badge {
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.78rem;
+            font-weight: 700;
+        }
+
+        .tag-district {
+            background-color: var(--accent-blue);
+            color: #2C5282;
+        }
+
+        .tag-category {
+            background-color: var(--accent-green);
+            color: #276749;
+        }
+
+        .tag-custom {
+            background-color: var(--accent-purple);
+            color: #5B2C6F;
+        }
+
+        .card-preview {
+            background-color: #FAF5EF;
+            border-radius: var(--border-radius-sm);
+            padding: 10px 12px;
+            font-size: 0.88rem;
+            color: #555;
+            border-left: 4px solid var(--accent-pink-dark);
+        }
+
+        .card-preview strong {
+            color: #8C4254;
+        }
+
+        .provider-tag {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* 懸浮新增按鈕 (FAB) */
+        .fab {
+            position: fixed;
+            bottom: 24px;
+            right: 20px;
+            background: linear-gradient(135deg, #FFB6C1, #E5A3B3);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 14px 22px;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 800;
+            box-shadow: 0 8px 20px rgba(229, 163, 179, 0.5);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 90;
+            transition: all 0.2s ease;
+        }
+
+        .fab:active {
+            transform: scale(0.95);
+        }
+
+        /* 彈出視窗 (Modal) - 詳情頁 & 新增頁 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(74, 60, 50, 0.45);
+            backdrop-filter: blur(4px);
+            z-index: 200;
+            justify-content: center;
+            align-items: flex-end;
+            padding: 0;
+            animation: fadeIn 0.25s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-container {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 600px;
+            max-height: 88vh;
+            border-top-left-radius: 28px;
+            border-top-right-radius: 28px;
+            padding: 24px 20px 32px;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.15);
+            animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 18px;
+            right: 20px;
+            background: #F3EDE5;
+            border: none;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #7A6055;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .detail-header {
+            margin-bottom: 16px;
+            padding-right: 40px;
+        }
+
+        .detail-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #3D2C28;
+            margin: 0 0 6px 0;
+        }
+
+        .detail-section {
+            background-color: #FAF6F0;
+            border-radius: var(--border-radius-sm);
+            padding: 14px 16px;
+            margin-bottom: 14px;
+        }
+
+        .detail-section-title {
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: #8C4254;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .detail-text {
+            font-size: 0.95rem;
+            color: var(--text-main);
+            margin: 0;
+            white-space: pre-line;
+        }
+
+        .avoid-box {
+            background-color: #FFF2F2;
+            border-left: 4px solid #FF8080;
+        }
+
+        .avoid-box .detail-section-title {
+            color: #C53030;
+        }
+
+        /* 表單樣式 */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #5C4033;
+            margin-bottom: 6px;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #EFE6DC;
+            border-radius: var(--border-radius-sm);
+            font-family: inherit;
+            font-size: 0.92rem;
+            color: var(--text-main);
+            background: #FFFDF9;
+            outline: none;
+        }
+
+        .form-input:focus, .form-textarea:focus {
+            border-color: var(--accent-pink-dark);
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: linear-gradient(135deg, #FFB6C1, #E5A3B3);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 25px;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 800;
+            cursor: pointer;
+            margin-top: 10px;
+            box-shadow: 0 4px 12px rgba(229, 163, 179, 0.4);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="brand">
+            <span class="brand-icon">🍚</span>
+            <h1>飯飯都掂</h1>
+        </div>
+        <div class="subtitle">私房美食 & 飲品隨手記｜極簡好搜好查</div>
+    </header>
+
+    <div class="container">
+        <!-- 搜尋列 -->
+        <input type="text" id="searchInput" class="search-box" placeholder="🔍 搜尋店名、招牌食物、提供者..." oninput="renderList()">
+
+        <!-- 標籤動態篩選器 -->
+        <div class="filter-group">
+            <div class="filter-title">📍 地區篩選</div>
+            <div class="tags-scroll" id="districtFilter"></div>
+        </div>
+
+        <div class="filter-group">
+            <div class="filter-title">🍴 種類 / 美食分類</div>
+            <div class="tags-scroll" id="categoryFilter"></div>
+        </div>
+
+        <!-- 餐廳列表區 -->
+        <div id="restaurantList" class="restaurant-list"></div>
+    </div>
+
+    <!-- 懸浮按鈕：新增餐廳 -->
+    <button class="fab" onclick="openAddModal()">
+        <span>➕</span> 新增口袋名單
+    </button>
+
+    <!-- 詳情彈出視窗 Modal -->
+    <div id="detailModal" class="modal-overlay" onclick="closeModalOnOverlay(event, 'detailModal')">
+        <div class="modal-container">
+            <button class="modal-close" onclick="closeModal('detailModal')">✕</button>
+            <div class="detail-header">
+                <h2 id="modalTitle" class="detail-title"></h2>
+                <div id="modalStars" class="stars"></div>
+                <div id="modalTags" class="card-tags" style="margin-top: 10px;"></div>
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-section-title">📍 地址 / 地區</div>
+                <p id="modalAddress" class="detail-text"></p>
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-section-title">✨ 必吃 / 必飲推薦 (Preview)</div>
+                <p id="modalSignature" class="detail-text"></p>
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-section-title">💚 推薦亮點 / 好食原因</div>
+                <p id="modalPros" class="detail-text"></p>
+            </div>
+
+            <div class="detail-section avoid-box">
+                <div class="detail-section-title">⚠️ 避雷注意 / 缺點備註</div>
+                <p id="modalCons" class="detail-text"></p>
+            </div>
+
+            <div class="detail-section">
+                <div class="detail-section-title">👤 提供者 / 來源</div>
+                <p id="modalProvider" class="detail-text"></p>
+            </div>
+
+            <div id="modalLinkBox" class="detail-section" style="display:none;">
+                <div class="detail-section-title">🔗 參考連結 / IG 貼文</div>
+                <p id="modalLink" class="detail-text"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新增餐廳彈出視窗 Modal -->
+    <div id="addModal" class="modal-overlay" onclick="closeModalOnOverlay(event, 'addModal')">
+        <div class="modal-container">
+            <button class="modal-close" onclick="closeModal('addModal')">✕</button>
+            <h2 class="detail-title" style="margin-bottom: 20px;">✍️ 新增口袋餐廳</h2>
+
+            <form id="addForm" onsubmit="saveRestaurant(event)">
+                <div class="form-group">
+                    <label class="form-label">店名 *</label>
+                    <input type="text" id="addName" class="form-input" placeholder="例如: Bakehouse" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">星數評分 (1-5 星)</label>
+                    <select id="addRating" class="form-select">
+                        <option value="5">⭐⭐⭐⭐⭐ (5星 - 必去極推)</option>
+                        <option value="4.5">⭐⭐⭐⭐✨ (4.5星 - 很棒)</option>
+                        <option value="4" selected>⭐⭐⭐⭐ (4星 - 好吃會再訪)</option>
+                        <option value="3.5">⭐⭐⭐✨ (3.5星 - 普通不錯)</option>
+                        <option value="3">⭐⭐⭐ (3星 - 平庸可吃)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">地區 (可多選，逗號分隔) *</label>
+                    <input type="text" id="addDistrict" class="form-input" placeholder="例如: 中環, 港島區" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">美食種類 (可多選，逗號分隔) *</label>
+                    <input type="text" id="addCategory" class="form-input" placeholder="例如: 甜點/烘焙, 咖啡" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">招牌必點 (一句話 Preview) *</label>
+                    <input type="text" id="addSignature" class="form-input" placeholder="例如: 酸種蛋撻、可頌" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">地址</label>
+                    <input type="text" id="addAddress" class="form-input" placeholder="例如: 中環士丹利街14號">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">推薦點 / 好食心得</label>
+                    <textarea id="addPros" class="form-textarea" rows="2" placeholder="例如: 剛出爐皮超酥脆，牛油香十足"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">避雷注意 / 缺點</label>
+                    <textarea id="addCons" class="form-textarea" rows="2" placeholder="例如: 假日排隊半小時以上，建議早上去"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">提供者 / 資訊來源 *</label>
+                    <input type="text" id="addProvider" class="form-input" placeholder="例如: 脆友 @foodie_hk / 朋友阿強" required>
+                </div>
+
+                <button type="submit" class="btn-submit">💾 儲存到口袋名單</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // 預設香港在地資料數據
+        const defaultRestaurants = [
+            {
+                id: 1,
+                name: "Bakehouse",
+                rating: 4.5,
+                districts: ["中環", "港島區", "灣仔"],
+                categories: ["甜點/烘焙", "咖啡/輕食"],
+                signature: "酸種蛋撻 (Sourdough Egg Tart)、可頌",
+                address: "中環士丹利街14號地下 / 灣仔大王東街14號",
+                pros: "皮極度酥脆，蛋漿香濃不會過甜，放涼了依然很好吃！",
+                cons: "熱門時段常要排隊15-20分鐘，蛋撻有時下午會賣完。",
+                provider: "Threads 脆友推薦",
+                link: ""
+            },
+            {
+                id: 2,
+                name: "九記牛腩",
+                rating: 4,
+                districts: ["中環", "港島區"],
+                categories: ["地道港味", "粉麵"],
+                signature: "上湯牛爽腩、咖哩牛筋腩伊麵",
+                address: "中環歌賦街21號地舖",
+                pros: "湯底藥材味香濃，牛腩燉得非常軟臠入味。",
+                cons: "夥計態度較冷淡，阿姨收拾快，環境較擠迫，必須併桌。",
+                provider: "朋友 Mary 口傳",
+                link: ""
+            },
+            {
+                id: 3,
+                name: "How To Live Well",
+                rating: 4.5,
+                districts: ["尖沙咀", "九龍區"],
+                categories: ["Bistro/晚餐", "咖啡/輕食", "甜點/烘焙"],
+                signature: "焦糖手工意粉、焙茶戚風蛋糕",
+                address: "尖沙咀河內道18號K11購物藝術館2樓",
+                pros: "環境極美日系木質風，座位寬敞舒適，適合朋友約會打卡。",
+                cons: "人均消費略高 ($180-250)，晚餐時間建議先預約。",
+                provider: "IG @hk_cafe_hunter 貼文",
+                link: ""
+            },
+            {
+                id: 4,
+                name: "華嫂冰室",
+                rating: 4,
+                districts: ["觀塘", "九龍區", "灣仔"],
+                categories: ["地道港味", "茶餐廳"],
+                signature: "招牌菠蘿包 (夾蛋牛油蕃茄)、豬扒雞翼米線",
+                address: "觀塘敬業街55號皇廷廣場1號舖",
+                pros: "菠蘿包熱辣辣，冰火交融，蕃茄片酸甜解膩！",
+                cons: "午市人潮極多，排隊時間長。",
+                provider: "同事 Eric 推薦",
+                link: ""
+            }
+        ];
+
+        // 預設分類與地區標籤
+        const presetDistricts = ["全部", "港島區", "九龍區", "新界區", "中環", "灣仔", "尖沙咀", "觀塘", "旺角", "外地旅遊"];
+        const presetCategories = ["全部", "地道港味", "茶餐廳", "甜點/烘焙", "咖啡/輕食", "日韓台料理", "Bistro/晚餐", "外賣掃街"];
+
+        let activeDistrict = "全部";
+        let activeCategory = "全部";
+        let restaurants = [];
+
+        // 初始化
+        function init() {
+            const saved = localStorage.getItem('fan_fan_restaurants');
+            if (saved) {
+                try {
+                    restaurants = JSON.parse(saved);
+                } catch(e) {
+                    restaurants = defaultRestaurants;
+                }
+            } else {
+                restaurants = defaultRestaurants;
+                localStorage.setItem('fan_fan_restaurants', JSON.stringify(restaurants));
+            }
+
+            renderFilterButtons();
+            renderList();
+        }
+
+        // 渲染標籤按鈕
+        function renderFilterButtons() {
+            const dContainer = document.getElementById('districtFilter');
+            dContainer.innerHTML = presetDistricts.map(d => 
+                `<button class="tag-btn ${d === activeDistrict ? 'active' : ''}" onclick="setDistrict('${d}')">${d}</button>`
+            ).join('');
+
+            const cContainer = document.getElementById('categoryFilter');
+            cContainer.innerHTML = presetCategories.map(c => 
+                `<button class="tag-btn ${c === activeCategory ? 'active' : ''}" onclick="setCategory('${c}')">${c}</button>`
+            ).join('');
+        }
+
+        function setDistrict(d) {
+            activeDistrict = d;
+            renderFilterButtons();
+            renderList();
+        }
+
+        function setCategory(c) {
+            activeCategory = c;
+            renderFilterButtons();
+            renderList();
+        }
+
+        // 生成星數圖示
+        function getStarRating(score) {
+            const fullStars = Math.floor(score);
+            const hasHalf = score % 1 !== 0;
+            let stars = '★'.repeat(fullStars);
+            if (hasHalf) stars += '✨';
+            return stars;
+        }
+
+        // 渲染列表 (ListView)
+        function renderList() {
+            const query = document.getElementById('searchInput').value.trim().toLowerCase();
+            const listContainer = document.getElementById('restaurantList');
+
+            const filtered = restaurants.filter(item => {
+                // 地區過濾
+                const matchDistrict = (activeDistrict === "全部") || item.districts.some(d => d.includes(activeDistrict) || activeDistrict.includes(d));
+                // 類別過濾
+                const matchCategory = (activeCategory === "全部") || item.categories.some(c => c.includes(activeCategory) || activeCategory.includes(c));
+                // 搜尋關鍵字
+                const matchSearch = !query || 
+                    item.name.toLowerCase().includes(query) ||
+                    item.signature.toLowerCase().includes(query) ||
+                    item.provider.toLowerCase().includes(query) ||
+                    item.districts.some(d => d.toLowerCase().includes(query)) ||
+                    item.categories.some(c => c.toLowerCase().includes(query));
+
+                return matchDistrict && matchCategory && matchSearch;
+            });
+
+            if (filtered.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🥣</div>
+                        <p>找不到符合的口袋餐廳喔～<br>點右下角 ➕ 增加一間吧！</p>
+                    </div>
+                `;
+                return;
+            }
+
+            listContainer.innerHTML = filtered.map(item => `
+                <div class="card" onclick="openDetailModal(${item.id})">
+                    <div class="card-header">
+                        <h3 class="card-title">${item.name}</h3>
+                        <div class="stars">${getStarRating(item.rating)}</div>
+                    </div>
+                    <div class="card-tags">
+                        ${item.districts.map(d => `<span class="tag-badge tag-district">📍 ${d}</span>`).join('')}
+                        ${item.categories.map(c => `<span class="tag-badge tag-category">🍴 ${c}</span>`).join('')}
+                    </div>
+                    <div class="card-preview">
+                        <strong>✨ 必食/必飲 Preview:</strong> ${item.signature}
+                    </div>
+                    <div class="provider-tag">
+                        👤 提供者: ${item.provider}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 開啟詳情 Modal
+        function openDetailModal(id) {
+            const item = restaurants.find(r => r.id === id);
+            if (!item) return;
+
+            document.getElementById('modalTitle').innerText = item.name;
+            document.getElementById('modalStars').innerText = `${getStarRating(item.rating)} (${item.rating} 分)`;
+            
+            const tagsHtml = [
+                ...item.districts.map(d => `<span class="tag-badge tag-district">📍 ${d}</span>`),
+                ...item.categories.map(c => `<span class="tag-badge tag-category">🍴 ${c}</span>`)
+            ].join(' ');
+            document.getElementById('modalTags').innerHTML = tagsHtml;
+
+            document.getElementById('modalAddress').innerText = item.address || "未有詳細地址";
+            document.getElementById('modalSignature').innerText = item.signature;
+            document.getElementById('modalPros').innerText = item.pros || "無備註";
+            document.getElementById('modalCons').innerText = item.cons || "無備註 (表現良好/未發現缺點)";
+            document.getElementById('modalProvider').innerText = item.provider;
+
+            document.getElementById('detailModal').style.display = 'flex';
+        }
+
+        // 開啟新增 Modal
+        function openAddModal() {
+            document.getElementById('addModal').style.display = 'flex';
+        }
+
+        // 關閉 Modal
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function closeModalOnOverlay(e, modalId) {
+            if (e.target.id === modalId) {
+                closeModal(modalId);
+            }
+        }
+
+        // 儲存新餐廳
+        function saveRestaurant(e) {
+            e.preventDefault();
+
+            const name = document.getElementById('addName').value.trim();
+            const rating = parseFloat(document.getElementById('addRating').value);
+            const districts = document.getElementById('addDistrict').value.split(',').map(s => s.trim()).filter(Boolean);
+            const categories = document.getElementById('addCategory').value.split(',').map(s => s.trim()).filter(Boolean);
+            const signature = document.getElementById('addSignature').value.trim();
+            const address = document.getElementById('addAddress').value.trim();
+            const pros = document.getElementById('addPros').value.trim();
+            const cons = document.getElementById('addCons').value.trim();
+            const provider = document.getElementById('addProvider').value.trim();
+
+            const newItem = {
+                id: Date.now(),
+                name,
+                rating,
+                districts,
+                categories,
+                signature,
+                address,
+                pros,
+                cons,
+                provider,
+                link: ""
+            };
+
+            restaurants.unshift(newItem);
+            localStorage.setItem('fan_fan_restaurants', JSON.stringify(restaurants));
+
+            closeModal('addModal');
+            document.getElementById('addForm').reset();
+            renderList();
+
+            alert(`🎉 已成功將「${name}」加到口袋名單！`);
+        }
+
+        // 啟動 App
+        window.onload = init;
+    </script>
+</body>
+</html>
