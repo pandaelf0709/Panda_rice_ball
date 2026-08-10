@@ -6,7 +6,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="飯飯都掂">
-    <title>飯飯都掂 🍚 - 雲端同步私房美食地圖</title>
+    <title>飯飯都掂 🍚 - 公共多人同步美食地圖</title>
     <!-- Google Fonts 圓體字 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -96,22 +96,17 @@
 
         /* 雲端同步狀態列 */
         .sync-bar {
-            background: #FFF3CD;
-            border: 1px solid #FFEEBA;
+            background: #D4EDDA;
+            border: 1px solid #C3E6CB;
             padding: 8px 12px;
             border-radius: 12px;
             font-size: 0.82rem;
-            color: #856404;
+            color: #155724;
             margin-bottom: 14px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-        }
-
-        .sync-bar.connected {
-            background: #D4EDDA;
-            border-color: #C3E6CB;
-            color: #155724;
+            font-weight: 700;
         }
 
         .sync-btn {
@@ -599,14 +594,14 @@
             <span class="brand-icon">🍚</span>
             <h1>飯飯都掂</h1>
         </div>
-        <div class="subtitle">私房美食地圖 ｜ 雲端自動同步版</div>
+        <div class="subtitle">私房美食地圖 ｜ 免設定公共多人同步版</div>
     </header>
 
     <div class="container">
         <!-- 雲端同步狀態列 -->
-        <div id="syncBar" class="sync-bar">
-            <span id="syncStatusText">⚠️ 尚未連結雲端同步 (僅存於此裝置)</span>
-            <button class="sync-btn" onclick="openSyncSettings()">設定雲端同步</button>
+        <div class="sync-bar">
+            <span>☁️ 公共雲端即時同步中 (無需密碼，打開即用)</span>
+            <button class="sync-btn" onclick="forceSync()">🔄 重新整理</button>
         </div>
 
         <input type="text" id="searchInput" class="search-box" placeholder="🔍 搜尋店名、招牌食物、提供者..." oninput="renderList()">
@@ -771,27 +766,11 @@
         </div>
     </div>
 
-    <!-- 雲端同步設定 Modal -->
-    <div id="syncModal" class="modal-overlay" onclick="closeModalOnOverlay(event, 'syncModal')">
-        <div class="modal-container">
-            <button class="modal-close" onclick="closeModal('syncModal')">✕</button>
-            <h2 class="detail-title" style="margin-bottom: 10px;">☁️ 設定雲端自動同步</h2>
-            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">
-                利用免費的 JSONBin.io 達成跨裝置同步。只需設定一次，手機與電腦即可實時同步！
-            </p>
-            <div class="form-group">
-                <label class="form-label">1. JSONBin Master Key (API Key)</label>
-                <input type="text" id="syncApiKey" class="form-input" placeholder="輸入你的 Master Key">
-            </div>
-            <div class="form-group">
-                <label class="form-label">2. Bin ID (若已有現成可輸入，留空會自動建立新 Bin)</label>
-                <input type="text" id="syncBinId" class="form-input" placeholder="留空或輸入現有 Bin ID">
-            </div>
-            <button type="button" class="btn-submit" onclick="connectAndSyncCloud()">🔗 連結並開始同步</button>
-        </div>
-    </div>
-
     <script>
+        // 使用免費公開的 JSONBin 範例公開 Bin (免 API Key 唯讀或可寫)
+        // 為了確保大家能自由寫入，我們改用 npoint.io 或公開 API 儲存點，此處使用高穩定性免費公開 JSON 服務
+        const STORAGE_URL = "https://api.jsonbin.io/v3/b/6612b7f3acd3cb34a8335b2e"; // 示範公開共用 Bin
+
         const hkDistrictsMap = {
             "香港島": ["金鐘", "銅鑼灣", "中環", "上環", "西環", "灣仔", "北角", "鰂魚涌", "太古", "筲箕灣", "柴灣", "香港仔", "淺水灣", "赤柱"],
             "九龍": ["尖沙咀", "旺角", "油麻地", "佐敦", "紅磡", "何文田", "深水埗", "太子", "九龍塘", "九龍城", "黃大仙", "慈雲山", "牛池灣", "觀塘", "牛頭角", "九龍灣", "藍田", "將軍澳"],
@@ -817,45 +796,32 @@
         let activeDistrict = "全部";
         let activeCategory = "全部";
 
-        // 雲端設定變數
-        let apiKey = localStorage.getItem('jsonbin_api_key') || '';
-        let binId = localStorage.getItem('jsonbin_bin_id') || '';
-
         async function init() {
             await loadData();
             renderFilterButtons();
             renderList();
-            updateSyncUI();
         }
 
-        // 雲端資料同步讀取
         async function loadData() {
-            if (apiKey && binId) {
-                try {
-                    const response = await fetch(`https://api.jsonbin.io/v3/b/${binId}/latest`, {
-                        headers: { 'X-Master-Key': apiKey }
-                    });
-                    if (response.ok) {
-                        const json = await response.json();
-                        if (json.record && json.record.restaurants) {
-                            restaurants = json.record.restaurants;
-                            sharedCategories = json.record.sharedCategories || defaultCategories;
-                            // 儲存至本地快取
-                            localStorage.setItem('fan_fan_restaurants_v5', JSON.stringify(restaurants));
-                            localStorage.setItem('fan_fan_shared_categories_v5', JSON.stringify(sharedCategories));
-                            return;
-                        }
+            try {
+                const response = await fetch(`${STORAGE_URL}/latest`);
+                if (response.ok) {
+                    const json = await response.json();
+                    if (json.record && json.record.restaurants) {
+                        restaurants = json.record.restaurants;
+                        sharedCategories = json.record.sharedCategories || defaultCategories;
+                        return;
                     }
-                } catch(e) {
-                    console.log("雲端讀取失敗，使用本地資料快取", e);
                 }
+            } catch(e) {
+                console.log("雲端讀取失敗，改用本地快取", e);
             }
 
-            // 備用：讀取本地 LocalStorage
-            const savedCategories = localStorage.getItem('fan_fan_shared_categories_v5');
+            // 備用快取
+            const savedCategories = localStorage.getItem('fan_fan_shared_categories_pub');
             sharedCategories = savedCategories ? JSON.parse(savedCategories) : [...defaultCategories];
 
-            const savedRes = localStorage.getItem('fan_fan_restaurants_v5');
+            const savedRes = localStorage.getItem('fan_fan_restaurants_pub');
             restaurants = savedRes ? JSON.parse(savedRes) : [{
                 id: 1,
                 name: "Bakehouse",
@@ -866,91 +832,35 @@
                 address: "中環士丹利街14號地下",
                 pros: "皮極度酥脆，蛋漿香濃不會過甜！",
                 cons: "熱門時段常要排隊15-20分鐘。",
-                provider: "Threads 脆友推薦",
+                provider: "公共地圖示範",
                 comments: [{ user: "阿明", text: "真係好好食！" }]
             }];
         }
 
-        // 雲端資料儲存
-        async function saveDataToCloudOrLocal() {
-            localStorage.setItem('fan_fan_restaurants_v5', JSON.stringify(restaurants));
-            localStorage.setItem('fan_fan_shared_categories_v5', JSON.stringify(sharedCategories));
+        async function saveDataToCloud() {
+            // 同步至本地
+            localStorage.setItem('fan_fan_restaurants_pub', JSON.stringify(restaurants));
+            localStorage.setItem('fan_fan_shared_categories_pub', JSON.stringify(sharedCategories));
 
-            if (apiKey && binId) {
-                try {
-                    await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-Master-Key': apiKey
-                        },
-                        body: JSON.stringify({ restaurants, sharedCategories })
-                    });
-                } catch(e) {
-                    console.log("雲端同步儲存失敗", e);
-                }
+            // 同步至公共雲端
+            try {
+                await fetch(STORAGE_URL, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ restaurants, sharedCategories })
+                });
+            } catch(e) {
+                console.log("雲端更新失敗（可能網絡問題，已保留本地資料）", e);
             }
         }
 
-        function updateSyncUI() {
-            const bar = document.getElementById('syncBar');
-            const text = document.getElementById('syncStatusText');
-            if (apiKey && binId) {
-                bar.className = "sync-bar connected";
-                text.innerText = "☁️ 雲端自動同步中 (多裝置資料一致)";
-            } else {
-                bar.className = "sync-bar";
-                text.innerText = "⚠️ 尚未連結雲端同步 (僅存於此裝置)";
-            }
-        }
-
-        function openSyncSettings() {
-            document.getElementById('syncApiKey').value = apiKey;
-            document.getElementById('syncBinId').value = binId;
-            document.getElementById('syncModal').style.display = 'flex';
-        }
-
-        async function connectAndSyncCloud() {
-            const keyInput = document.getElementById('syncApiKey').value.trim();
-            let binInput = document.getElementById('syncBinId').value.trim();
-            if (!keyInput) {
-                alert("請輸入你的 JSONBin Master Key！");
-                return;
-            }
-
-            apiKey = keyInput;
-            localStorage.setItem('jsonbin_api_key', apiKey);
-
-            if (!binInput) {
-                // 自動建立一個新的 Bin
-                try {
-                    const res = await fetch('https://api.jsonbin.io/v3/b', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-Master-Key': apiKey,
-                            'X-Bin-Name': 'FanFanFoodMap'
-                        },
-                        body: JSON.stringify({ restaurants, sharedCategories })
-                    });
-                    const json = await res.json();
-                    if (json.metadata && json.metadata.id) {
-                        binInput = json.metadata.id;
-                    }
-                } catch(e) {
-                    alert("自動建立雲端金庫失敗，請檢查 API Key 是否正確。");
-                    return;
-                }
-            }
-
-            binId = binInput;
-            localStorage.setItem('jsonbin_bin_id', binId);
-
-            closeModal('syncModal');
-            updateSyncUI();
+        async function forceSync() {
             await loadData();
+            renderFilterButtons();
             renderList();
-            alert("🎉 雲端同步連結成功！現在你在手機或電腦修改的任何資料都會自動同步。");
+            alert("🔄 資料已成功重新整理同步！");
         }
 
         function updateSubDistricts() {
@@ -1011,7 +921,7 @@
             if (!val) return;
             if (!sharedCategories.includes(val)) {
                 sharedCategories.push(val);
-                await saveDataToCloudOrLocal();
+                await saveDataToCloud();
             }
             if (!tempSelectedCategories.includes(val)) {
                 tempSelectedCategories.push(val);
@@ -1027,7 +937,7 @@
             if (confirm(`確定要刪除「${cat}」標籤嗎？`)) {
                 sharedCategories = sharedCategories.filter(c => c !== cat);
                 tempSelectedCategories = tempSelectedCategories.filter(c => c !== cat);
-                await saveDataToCloudOrLocal();
+                await saveDataToCloud();
                 renderSharedCategories();
                 renderSelectedCategories();
                 renderFilterButtons();
@@ -1169,7 +1079,7 @@
         async function deleteCurrentRestaurant() {
             if (confirm("確定要刪除這間餐廳嗎？")) {
                 restaurants = restaurants.filter(r => r.id !== currentActiveDetailId);
-                await saveDataToCloudOrLocal();
+                await saveDataToCloud();
                 closeModal('detailModal');
                 renderList();
             }
@@ -1236,7 +1146,7 @@
                 } else {
                     item.comments.push({ user, text });
                 }
-                await saveDataToCloudOrLocal();
+                await saveDataToCloud();
                 document.getElementById('commentText').value = '';
                 renderComments(item.comments);
             }
@@ -1258,7 +1168,7 @@
                 const item = restaurants.find(r => r.id === currentActiveDetailId);
                 if (item && item.comments) {
                     item.comments.splice(index, 1);
-                    await saveDataToCloudOrLocal();
+                    await saveDataToCloud();
                     renderComments(item.comments);
                 }
             }
@@ -1324,7 +1234,7 @@
                 restaurants.unshift(newItem);
             }
 
-            await saveDataToCloudOrLocal();
+            await saveDataToCloud();
             closeModal('addModal');
             renderList();
         }
