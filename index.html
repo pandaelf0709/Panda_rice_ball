@@ -533,14 +533,19 @@
                         <option value="1">⭐ (1星 - 不吃後悔，吃了更後悔)</option>
                     </select>
                 </div>
+                
+                <!-- 預設地區標籤點擊多選 -->
                 <div class="form-group">
-                    <label class="form-label">地區 (逗號分隔) *</label>
-                    <input type="text" id="addDistrict" class="form-input" placeholder="例如: 中環, 港島區" required>
+                    <label class="form-label">選擇地區 (可多選) *</label>
+                    <div class="tags-scroll" id="formDistrictTags" style="margin-top: 4px;"></div>
                 </div>
+
+                <!-- 預設種類標籤點擊多選 -->
                 <div class="form-group">
-                    <label class="form-label">種類 (逗號分隔) *</label>
-                    <input type="text" id="addCategory" class="form-input" placeholder="例如: 甜點/烘焙, 咖啡" required>
+                    <label class="form-label">選擇種類 (可多選) *</label>
+                    <div class="tags-scroll" id="formCategoryTags" style="margin-top: 4px;"></div>
                 </div>
+
                 <div class="form-group">
                     <label class="form-label">招牌 Preview *</label>
                     <input type="text" id="addSignature" class="form-input" placeholder="例如: 酸種蛋撻" required>
@@ -565,7 +570,7 @@
                     <label class="form-label">提供者 *</label>
                     <input type="text" id="addProvider" class="form-input" placeholder="例如: 朋友阿強" required>
                 </div>
-                <button type="submit" class="btn-submit">💾 儲存餐廳</button>
+                <button type="submit" id="submitBtn" class="btn-submit">💾 儲存餐廳</button>
             </form>
         </div>
     </div>
@@ -600,22 +605,59 @@
     </script>
 
     <script>
-        const presetDistricts = ["全部", "港島區", "九龍區", "新界區", "中環", "灣仔", "尖沙咀", "觀塘", "旺角", "外地旅遊"];
-        const presetCategories = ["全部", "地道港味", "茶餐廳", "甜點/烘焙", "咖啡/輕食", "日韓台料理", "Bistro/晚餐", "外賣掃街"];
+        const rawDistricts = ["港島區-中環", "港島區-灣仔", "九龍區-尖沙咀", "九龍區-旺角", "九龍區-觀塘", "新界區-上水", "新界區-沙田", "新界區-屯門", "外地旅遊"];
+        const rawCategories = ["地道港味", "茶餐廳", "甜點/烘焙", "咖啡/輕食", "日韓台料理", "Bistro/晚餐", "外賣掃街"];
 
         let activeDistrict = "全部";
         let activeCategory = "全部";
         let restaurantsData = {};
         let currentSelectedId = null;
 
+        // 表單中被勾選的暫存陣列
+        let selectedFormDistricts = [];
+        let selectedFormCategories = [];
+
         function initFilters() {
-            document.getElementById('districtFilter').innerHTML = presetDistricts.map(d => 
+            const dOptions = ["全部", ...rawDistricts];
+            document.getElementById('districtFilter').innerHTML = dOptions.map(d => 
                 `<button class="tag-btn ${d === activeDistrict ? 'active' : ''}" onclick="setDistrict('${d}')">${d}</button>`
             ).join('');
 
-            document.getElementById('categoryFilter').innerHTML = presetCategories.map(c => 
+            const cOptions = ["全部", ...rawCategories];
+            document.getElementById('categoryFilter').innerHTML = cOptions.map(c => 
                 `<button class="tag-btn ${c === activeCategory ? 'active' : ''}" onclick="setCategory('${c}')">${c}</button>`
             ).join('');
+        }
+
+        // 初始化表單內的點擊標籤
+        function renderFormTagSelectors() {
+            document.getElementById('formDistrictTags').innerHTML = rawDistricts.map(d => {
+                const isActive = selectedFormDistricts.includes(d);
+                return `<button type="button" class="tag-btn ${isActive ? 'active' : ''}" onclick="toggleFormDistrict('${d}')">${d}</button>`;
+            }).join('');
+
+            document.getElementById('formCategoryTags').innerHTML = rawCategories.map(c => {
+                const isActive = selectedFormCategories.includes(c);
+                return `<button type="button" class="tag-btn ${isActive ? 'active' : ''}" onclick="toggleFormCategory('${c}')">${c}</button>`;
+            }).join('');
+        }
+
+        window.toggleFormDistrict = function(d) {
+            if (selectedFormDistricts.includes(d)) {
+                selectedFormDistricts = selectedFormDistricts.filter(item => item !== d);
+            } else {
+                selectedFormDistricts.push(d);
+            }
+            renderFormTagSelectors();
+        }
+
+        window.toggleFormCategory = function(c) {
+            if (selectedFormCategories.includes(c)) {
+                selectedFormCategories = selectedFormCategories.filter(item => item !== c);
+            } else {
+                selectedFormCategories.push(c);
+            }
+            renderFormTagSelectors();
         }
 
         window.setDistrict = function(d) {
@@ -646,7 +688,6 @@
             });
         }
 
-        // 新星等文字說明對應
         function getStarRatingInfo(score) {
             const num = parseInt(score) || 3;
             const stars = '★'.repeat(num);
@@ -768,6 +809,9 @@
             document.getElementById('formModalTitle').innerText = "✍️ 新增口袋餐廳";
             document.getElementById('addForm').reset();
             document.getElementById('editId').value = "";
+            selectedFormDistricts = [];
+            selectedFormCategories = [];
+            renderFormTagSelectors();
             document.getElementById('addModal').style.display = 'flex';
         }
 
@@ -779,8 +823,11 @@
             document.getElementById('editId').value = currentSelectedId;
             document.getElementById('addName').value = item.name;
             document.getElementById('addRating').value = item.rating || 3;
-            document.getElementById('addDistrict').value = (item.districts || []).join(', ');
-            document.getElementById('addCategory').value = (item.categories || []).join(', ');
+            
+            selectedFormDistricts = [...(item.districts || [])];
+            selectedFormCategories = [...(item.categories || [])];
+            renderFormTagSelectors();
+
             document.getElementById('addSignature').value = item.signature;
             document.getElementById('addAddress').value = item.address || "";
             document.getElementById('addMapLink').value = item.mapLink || "";
@@ -794,14 +841,24 @@
 
         window.handleFormSubmit = function(e) {
             e.preventDefault();
+
+            if (selectedFormDistricts.length === 0) {
+                alert("請至少選擇一個地區標籤！");
+                return;
+            }
+            if (selectedFormCategories.length === 0) {
+                alert("請至少選擇一個種類標籤！");
+                return;
+            }
+
             const editId = document.getElementById('editId').value;
             const id = editId ? editId : 'r_' + Date.now();
 
             const item = {
                 name: document.getElementById('addName').value.trim(),
                 rating: parseInt(document.getElementById('addRating').value),
-                districts: document.getElementById('addDistrict').value.split(',').map(s => s.trim()).filter(Boolean),
-                categories: document.getElementById('addCategory').value.split(',').map(s => s.trim()).filter(Boolean),
+                districts: selectedFormDistricts,
+                categories: selectedFormCategories,
                 signature: document.getElementById('addSignature').value.trim(),
                 address: document.getElementById('addAddress').value.trim(),
                 mapLink: document.getElementById('addMapLink').value.trim(),
@@ -811,10 +868,21 @@
                 comments: restaurantsData[id] ? (restaurantsData[id].comments || {}) : {}
             };
 
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.innerText = "儲存中...";
+            submitBtn.disabled = true;
+
             window.set(window.ref(window.db, 'restaurants/' + id), item).then(() => {
+                submitBtn.innerText = "💾 儲存餐廳";
+                submitBtn.disabled = false;
                 closeModal('addModal');
                 window.loadRestaurants();
                 alert("🎉 儲存成功！");
+            }).catch((error) => {
+                submitBtn.innerText = "💾 儲存餐廳";
+                submitBtn.disabled = false;
+                console.error(error);
+                alert("儲存失敗，請檢查 Firebase 資料庫權限設定。\n錯誤訊息: " + error.message);
             });
         }
 
