@@ -1,591 +1,596 @@
-<style>
-    :root {
-        --bg-color: #FAF6F0;
-        --card-bg: #FFFFFF;
-        --text-main: #4A4A4A;
-        --text-muted: #8C8C8C;
-        --accent-pink: #FFD1DC;
-        --accent-pink-dark: #E5A3B3;
-        --accent-yellow: #FFEAA7;
-        --accent-green: #D1E8E2;
-        --accent-blue: #D4E6F1;
-        --accent-purple: #E8DAEF;
-        --star-color: #FFC048;
-        --border-radius-lg: 20px;
-        --border-radius-sm: 12px;
-        --shadow-soft: 0 8px 20px rgba(180, 160, 140, 0.12);
-    }
-
-    * {
-        box-sizing: border-box;
-        -webkit-tap-highlight-color: transparent;
-    }
-
-    body {
-        background-color: var(--bg-color);
-        font-family: 'M PLUS Rounded 1c', 'Noto Sans TC', -apple-system, sans-serif;
-        color: var(--text-main);
-        margin: 0;
-        padding: 0;
-        padding-bottom: 90px;
-        line-height: 1.6;
-    }
-
-    header {
-        background-color: rgba(250, 246, 240, 0.92);
-        backdrop-filter: blur(10px);
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        padding: 16px 20px 12px;
-        border-bottom: 2px dashed #EFE6DC;
-        text-align: center;
-    }
-
-    .brand {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-    }
-
-    .brand-icon {
-        font-size: 2rem;
-        animation: bounce 2s infinite ease-in-out;
-    }
-
-    @keyframes bounce {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-5px); }
-    }
-
-    h1 {
-        font-size: 1.65rem;
-        font-weight: 800;
-        margin: 0;
-        color: #5C4033;
-        letter-spacing: 1px;
-    }
-
-    .subtitle {
-        font-size: 0.82rem;
-        color: var(--text-muted);
-        margin-top: 2px;
-        font-weight: 500;
-    }
-
-    .container {
-        max-width: 600px;
-        margin: 0 auto;
-        padding: 16px;
-    }
-
-    /* 雲端同步狀態列 */
-    .sync-bar {
-        background: #D4EDDA;
-        border: 1px solid #C3E6CB;
-        padding: 8px 12px;
-        border-radius: 12px;
-        font-size: 0.82rem;
-        color: #155724;
-        margin-bottom: 14px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-weight: 700;
-    }
-
-    .sync-btn {
-        background: #5C4033;
-        color: white;
-        border: none;
-        padding: 4px 10px;
-        border-radius: 8px;
-        font-size: 0.78rem;
-        cursor: pointer;
-        font-weight: 700;
-    }
-
-    .search-box {
-        width: 100%;
-        background: var(--card-bg);
-        border: 2px solid #EFE6DC;
-        padding: 12px 18px;
-        border-radius: 25px;
-        font-family: inherit;
-        font-size: 0.95rem;
-        color: var(--text-main);
-        outline: none;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-        transition: all 0.2s ease;
-        margin-bottom: 14px;
-    }
-
-    .search-box:focus {
-        border-color: var(--accent-pink-dark);
-        box-shadow: 0 4px 12px rgba(229, 163, 179, 0.25);
-    }
-
-    .filter-group {
-        margin-bottom: 18px;
-        background: rgba(255, 255, 255, 0.5);
-        padding: 12px;
-        border-radius: 16px;
-        border: 1px solid #EFE6DC;
-    }
-
-    .filter-title {
-        font-size: 0.85rem;
-        font-weight: 700;
-        color: #7A6055;
-        margin-bottom: 8px;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-    }
-
-    .tags-scroll {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 8px;
-    }
-
-    .tag-btn {
-        background: #EFE8DE;
-        color: #6B5B52;
-        border: none;
-        padding: 6px 14px;
-        border-radius: 20px;
-        font-size: 0.82rem;
-        font-family: inherit;
-        font-weight: 700;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-    }
-
-    .tag-btn.active {
-        background: var(--accent-pink-dark);
-        color: #FFFFFF;
-        transform: scale(1.03);
-        box-shadow: 0 3px 8px rgba(229, 163, 179, 0.4);
-    }
-
-    .tag-more-btn {
-        background: #FAF5EF;
-        color: #8C4254;
-        border: 2px dashed #E5A3B3;
-    }
-
-    .tag-delete-x {
-        background: rgba(0,0,0,0.15);
-        color: inherit;
-        border-radius: 50%;
-        width: 16px;
-        height: 16px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.7rem;
-        cursor: pointer;
-        border: none;
-    }
-
-    .tag-delete-x:hover {
-        background: rgba(200, 0, 0, 0.4);
-        color: white;
-    }
-
-    .restaurant-list {
-        display: flex;
-        flex-direction: column;
-        gap: 16px;
-    }
-
-    .card {
-        background: var(--card-bg);
-        border-radius: var(--border-radius-lg);
-        padding: 18px;
-        box-shadow: var(--shadow-soft);
-        border: 2px solid #F3EDE5;
-        cursor: pointer;
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .card:active {
-        transform: scale(0.98);
-    }
-
-    .card-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        margin-bottom: 8px;
-    }
-
-    .card-title {
-        font-size: 1.25rem;
-        font-weight: 800;
-        color: #3D2C28;
-        margin: 0;
-    }
-
-    .stars {
-        color: var(--star-color);
-        font-size: 0.95rem;
-        letter-spacing: 1px;
-        font-weight: bold;
-    }
-
-    .card-tags {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-        margin-bottom: 12px;
-    }
-
-    .tag-badge {
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-size: 0.78rem;
-        font-weight: 700;
-        border: 2px solid #5C4033;
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-    }
-
-    .tag-district, .tag-category {
-        background-color: var(--card-bg);
-        color: #5C4033;
-    }
-
-    .card-preview {
-        background-color: #FAF5EF;
-        border-radius: var(--border-radius-sm);
-        padding: 10px 12px;
-        font-size: 0.88rem;
-        color: #555;
-        border-left: 4px solid var(--accent-pink-dark);
-    }
-
-    .card-preview strong {
-        color: #8C4254;
-    }
-
-    .provider-tag {
-        font-size: 0.75rem;
-        color: var(--text-muted);
-        margin-top: 8px;
-        display: flex;
-        align-items: center;
-        gap: 4px;
-    }
-
-    .fab {
-        position: fixed;
-        bottom: 24px;
-        right: 20px;
-        background: linear-gradient(135deg, #FFB6C1, #E5A3B3);
-        color: white;
-        border: none;
-        border-radius: 30px;
-        padding: 14px 22px;
-        font-family: inherit;
-        font-size: 1rem;
-        font-weight: 800;
-        box-shadow: 0 8px 20px rgba(229, 163, 179, 0.5);
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        z-index: 90;
-    }
-
-    .fab:active {
-        transform: scale(0.95);
-    }
-
-    .modal-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(74, 60, 50, 0.45);
-        backdrop-filter: blur(4px);
-        z-index: 200;
-        justify-content: center;
-        align-items: flex-end;
-        animation: fadeIn 0.25s ease;
-    }
-
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
-
-    .modal-container {
-        background: var(--card-bg);
-        width: 100%;
-        max-width: 600px;
-        max-height: 88vh;
-        border-top-left-radius: 28px;
-        border-top-right-radius: 28px;
-        padding: 24px 20px 32px;
-        overflow-y: auto;
-        position: relative;
-        box-shadow: 0 -10px 30px rgba(0,0,0,0.15);
-        animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    }
-
-    @keyframes slideUp {
-        from { transform: translateY(100%); }
-        to { transform: translateY(0); }
-    }
-
-    .modal-close {
-        position: absolute;
-        top: 18px;
-        right: 20px;
-        background: #F3EDE5;
-        border: none;
-        width: 34px;
-        height: 34px;
-        border-radius: 50%;
-        font-size: 1.1rem;
-        font-weight: bold;
-        color: #7A6055;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .detail-header {
-        margin-bottom: 16px;
-        padding-right: 40px;
-    }
-
-    .detail-title {
-        font-size: 1.5rem;
-        font-weight: 800;
-        color: #3D2C28;
-        margin: 0 0 6px 0;
-    }
-
-    .detail-section {
-        background-color: #FAF6F0;
-        border-radius: var(--border-radius-sm);
-        padding: 14px 16px;
-        margin-bottom: 14px;
-    }
-
-    .detail-section-title {
-        font-size: 0.85rem;
-        font-weight: 800;
-        color: #8C4254;
-        margin-bottom: 6px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-
-    .detail-text {
-        font-size: 0.95rem;
-        color: var(--text-main);
-        margin: 0;
-        white-space: pre-line;
-    }
-
-    .btn-nav {
-        background: linear-gradient(135deg, #4285F4, #34A853);
-        color: white;
-        border: none;
-        padding: 4px 10px;
-        border-radius: 12px;
-        font-size: 0.78rem;
-        font-weight: 700;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        text-decoration: none;
-        box-shadow: 0 2px 5px rgba(66, 133, 244, 0.3);
-    }
-    .btn-nav:active {
-        transform: scale(0.95);
-    }
-
-    .avoid-box {
-        background-color: #FFF2F2;
-        border-left: 4px solid #FF8080;
-    }
-
-    .avoid-box .detail-section-title {
-        color: #C53030;
-    }
-
-    .action-bar {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 16px;
-    }
-
-    .btn-action {
-        flex: 1;
-        padding: 10px;
-        border-radius: 20px;
-        font-family: inherit;
-        font-size: 0.88rem;
-        font-weight: 700;
-        cursor: pointer;
-        border: 2px solid #5C4033;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 4px;
-    }
-
-    .btn-edit-res {
-        background-color: #FFF3CD;
-        color: #856404;
-    }
-
-    .btn-del-res {
-        background-color: #F8D7DA;
-        color: #721C24;
-    }
-
-    .form-group {
-        margin-bottom: 16px;
-    }
-
-    .form-label {
-        display: block;
-        font-size: 0.88rem;
-        font-weight: 700;
-        color: #5C4033;
-        margin-bottom: 6px;
-    }
-
-    .form-input, .form-select, .form-textarea {
-        width: 100%;
-        padding: 12px 14px;
-        border: 2px solid #EFE6DC;
-        border-radius: var(--border-radius-sm);
-        font-family: inherit;
-        font-size: 0.92rem;
-        color: var(--text-main);
-        background: #FFFDF9;
-        outline: none;
-    }
-
-    .form-input:focus, .form-textarea:focus, .form-select:focus {
-        border-color: var(--accent-pink-dark);
-    }
-
-    .btn-submit {
-        width: 100%;
-        background: linear-gradient(135deg, #FFB6C1, #E5A3B3);
-        color: white;
-        border: none;
-        padding: 14px;
-        border-radius: 25px;
-        font-family: inherit;
-        font-size: 1rem;
-        font-weight: 800;
-        cursor: pointer;
-        margin-top: 10px;
-        box-shadow: 0 4px 12px rgba(229, 163, 179, 0.4);
-    }
-
-    .empty-state {
-        text-align: center;
-        padding: 40px 20px;
-        color: var(--text-muted);
-    }
-
-    .empty-icon {
-        font-size: 3rem;
-        margin-bottom: 10px;
-    }
-
-    .selected-tags-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-        margin-top: 8px;
-    }
-
-    .selected-tag-item {
-        background-color: #EFE8DE;
-        border: 2px solid #5C4033;
-        color: #5C4033;
-        padding: 4px 10px;
-        border-radius: 15px;
-        font-size: 0.8rem;
-        font-weight: 700;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-    }
-
-    .selected-tag-item button {
-        background: none;
-        border: none;
-        color: #5C4033;
-        cursor: pointer;
-        font-weight: bold;
-        font-size: 0.85rem;
-        padding: 0;
-    }
-
-    .comment-item {
-        background: white;
-        padding: 10px 12px;
-        border-radius: 8px;
-        margin-bottom: 8px;
-        border: 1px solid #EFE6DC;
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-    }
-
-    .comment-user {
-        font-weight: 700;
-        font-size: 0.82rem;
-        color: #8C4254;
-        margin-bottom: 2px;
-    }
-
-    .comment-actions {
-        display: flex;
-        gap: 6px;
-        font-size: 0.75rem;
-    }
-
-    .comment-action-btn {
-        background: none;
-        border: none;
-        cursor: pointer;
-        color: var(--text-muted);
-        font-weight: 700;
-    }
-
-    .comment-action-btn:hover {
-        color: #5C4033;
-    }
-</style>
-
-```
-
-```
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>熊米飯糰 - 有你有我</title>
+    <style>
+        :root {
+            --bg-color: #FAF6F0;
+            --card-bg: #FFFFFF;
+            --text-main: #4A4A4A;
+            --text-muted: #8C8C8C;
+            --accent-pink: #FFD1DC;
+            --accent-pink-dark: #E5A3B3;
+            --accent-yellow: #FFEAA7;
+            --accent-green: #D1E8E2;
+            --accent-blue: #D4E6F1;
+            --accent-purple: #E8DAEF;
+            --star-color: #FFC048;
+            --border-radius-lg: 20px;
+            --border-radius-sm: 12px;
+            --shadow-soft: 0 8px 20px rgba(180, 160, 140, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'M PLUS Rounded 1c', 'Noto Sans TC', -apple-system, sans-serif;
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            padding-bottom: 90px;
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: rgba(250, 246, 240, 0.92);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 16px 20px 12px;
+            border-bottom: 2px dashed #EFE6DC;
+            text-align: center;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .brand-icon {
+            font-size: 2rem;
+            animation: bounce 2s infinite ease-in-out;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        h1 {
+            font-size: 1.65rem;
+            font-weight: 800;
+            margin: 0;
+            color: #5C4033;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+            font-weight: 500;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 16px;
+        }
+
+        /* 雲端同步狀態列 */
+        .sync-bar {
+            background: #D4EDDA;
+            border: 1px solid #C3E6CB;
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 0.82rem;
+            color: #155724;
+            margin-bottom: 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+        }
+
+        .sync-btn {
+            background: #5C4033;
+            color: white;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 0.78rem;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .search-box {
+            width: 100%;
+            background: var(--card-bg);
+            border: 2px solid #EFE6DC;
+            padding: 12px 18px;
+            border-radius: 25px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            outline: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            transition: all 0.2s ease;
+            margin-bottom: 14px;
+        }
+
+        .search-box:focus {
+            border-color: var(--accent-pink-dark);
+            box-shadow: 0 4px 12px rgba(229, 163, 179, 0.25);
+        }
+
+        .filter-group {
+            margin-bottom: 18px;
+            background: rgba(255, 255, 255, 0.5);
+            padding: 12px;
+            border-radius: 16px;
+            border: 1px solid #EFE6DC;
+        }
+
+        .filter-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #7A6055;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .tags-scroll {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tag-btn {
+            background: #EFE8DE;
+            color: #6B5B52;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.82rem;
+            font-family: inherit;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tag-btn.active {
+            background: var(--accent-pink-dark);
+            color: #FFFFFF;
+            transform: scale(1.03);
+            box-shadow: 0 3px 8px rgba(229, 163, 179, 0.4);
+        }
+
+        .tag-more-btn {
+            background: #FAF5EF;
+            color: #8C4254;
+            border: 2px dashed #E5A3B3;
+        }
+
+        .tag-delete-x {
+            background: rgba(0,0,0,0.15);
+            color: inherit;
+            border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            cursor: pointer;
+            border: none;
+        }
+
+        .tag-delete-x:hover {
+            background: rgba(200, 0, 0, 0.4);
+            color: white;
+        }
+
+        .restaurant-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius-lg);
+            padding: 18px;
+            box-shadow: var(--shadow-soft);
+            border: 2px solid #F3EDE5;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:active {
+            transform: scale(0.98);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #3D2C28;
+            margin: 0;
+        }
+
+        .stars {
+            color: var(--star-color);
+            font-size: 0.95rem;
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        .tag-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            border: 2px solid #5C4033;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .tag-district, .tag-category {
+            background-color: var(--card-bg);
+            color: #5C4033;
+        }
+
+        .card-preview {
+            background-color: #FAF5EF;
+            border-radius: var(--border-radius-sm);
+            padding: 10px 12px;
+            font-size: 0.88rem;
+            color: #555;
+            border-left: 4px solid var(--accent-pink-dark);
+        }
+
+        .card-preview strong {
+            color: #8C4254;
+        }
+
+        .provider-tag {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .fab {
+            position: fixed;
+            bottom: 24px;
+            right: 20px;
+            background: linear-gradient(135deg, #FFB6C1, #E5A3B3);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            padding: 14px 22px;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 800;
+            box-shadow: 0 8px 20px rgba(229, 163, 179, 0.5);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 90;
+        }
+
+        .fab:active {
+            transform: scale(0.95);
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(74, 60, 50, 0.45);
+            backdrop-filter: blur(4px);
+            z-index: 200;
+            justify-content: center;
+            align-items: flex-end;
+            animation: fadeIn 0.25s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-container {
+            background: var(--card-bg);
+            width: 100%;
+            max-width: 600px;
+            max-height: 88vh;
+            border-top-left-radius: 28px;
+            border-top-right-radius: 28px;
+            padding: 24px 20px 32px;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.15);
+            animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 18px;
+            right: 20px;
+            background: #F3EDE5;
+            border: none;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #7A6055;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .detail-header {
+            margin-bottom: 16px;
+            padding-right: 40px;
+        }
+
+        .detail-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #3D2C28;
+            margin: 0 0 6px 0;
+        }
+
+        .detail-section {
+            background-color: #FAF6F0;
+            border-radius: var(--border-radius-sm);
+            padding: 14px 16px;
+            margin-bottom: 14px;
+        }
+
+        .detail-section-title {
+            font-size: 0.85rem;
+            font-weight: 800;
+            color: #8C4254;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .detail-text {
+            font-size: 0.95rem;
+            color: var(--text-main);
+            margin: 0;
+            white-space: pre-line;
+        }
+
+        .btn-nav {
+            background: linear-gradient(135deg, #4285F4, #34A853);
+            color: white;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            text-decoration: none;
+            box-shadow: 0 2px 5px rgba(66, 133, 244, 0.3);
+        }
+        .btn-nav:active {
+            transform: scale(0.95);
+        }
+
+        .avoid-box {
+            background-color: #FFF2F2;
+            border-left: 4px solid #FF8080;
+        }
+
+        .avoid-box .detail-section-title {
+            color: #C53030;
+        }
+
+        .action-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .btn-action {
+            flex: 1;
+            padding: 10px;
+            border-radius: 20px;
+            font-family: inherit;
+            font-size: 0.88rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: 2px solid #5C4033;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .btn-edit-res {
+            background-color: #FFF3CD;
+            color: #856404;
+        }
+
+        .btn-del-res {
+            background-color: #F8D7DA;
+            color: #721C24;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: #5C4033;
+            margin-bottom: 6px;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #EFE6DC;
+            border-radius: var(--border-radius-sm);
+            font-family: inherit;
+            font-size: 0.92rem;
+            color: var(--text-main);
+            background: #FFFDF9;
+            outline: none;
+        }
+
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            border-color: var(--accent-pink-dark);
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: linear-gradient(135deg, #FFB6C1, #E5A3B3);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 25px;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: 800;
+            cursor: pointer;
+            margin-top: 10px;
+            box-shadow: 0 4px 12px rgba(229, 163, 179, 0.4);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+
+        .selected-tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .selected-tag-item {
+            background-color: #EFE8DE;
+            border: 2px solid #5C4033;
+            color: #5C4033;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .selected-tag-item button {
+            background: none;
+            border: none;
+            color: #5C4033;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.85rem;
+            padding: 0;
+        }
+
+        .comment-item {
+            background: white;
+            padding: 10px 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border: 1px solid #EFE6DC;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .comment-user {
+            font-weight: 700;
+            font-size: 0.82rem;
+            color: #8C4254;
+            margin-bottom: 2px;
+        }
+
+        .comment-actions {
+            display: flex;
+            gap: 6px;
+            font-size: 0.75rem;
+        }
+
+        .comment-action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-muted);
+            font-weight: 700;
+        }
+
+        .comment-action-btn:hover {
+            color: #5C4033;
+        }
+    </style>
+</head>
+<body>
+
 <header>
     <div class="brand">
         <span class="brand-icon">🍚</span>
@@ -597,7 +602,7 @@
 <div class="container">
     <!-- 雲端同步狀態列 -->
     <div class="sync-bar">
-        <span>☁️ 大家嘅珍藏同步中</span>
+        <span>☁️ 大家嘅珍藏即時同步中</span>
         <button class="sync-btn" onclick="forceSync()">🔄 重新整理</button>
     </div>
 
@@ -648,7 +653,7 @@
         <div class="detail-section">
             <div class="detail-section-title">
                 <span>📍 地址</span>
-                <a id="modalNavBtn" href="#" target="_blank" class="btn-nav">🗺️ [帶我去]</a>
+                <a id="modalNavBtn" href="#" target="_blank" class="btn-nav">🗺️ 帶我去</a>
             </div>
             <p id="modalAddress" class="detail-text"></p>
         </div>
@@ -771,9 +776,38 @@
     </div>
 </div>
 
-<script>
-    const STORAGE_URL = "[https://api.jsonbin.io/v3/b/6612b7f3acd3cb34a8335b2e](https://api.jsonbin.io/v3/b/6612b7f3acd3cb34a8335b2e)";
+<!-- Firebase 模組化 SDK 設定 -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
+  const firebaseConfig = {
+    apiKey: "AIzaSyA4o3_qufWsS-8r4cD2YBCXPA4K5ulrdV0",
+    authDomain: "fanfan-dou-dim.firebaseapp.com",
+    projectId: "fanfan-dou-dim",
+    storageBucket: "fanfan-dou-dim.firebasestorage.app",
+    messagingSenderId: "1081553811639",
+    appId: "1:1081553811639:web:43a378417da104aeae7532"
+  };
+
+  // 初始化 Firebase
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
+
+  // 跨 module 畀下面傳統 function 呼叫
+  window.db = db;
+  window.dbRef = ref;
+  window.dbSet = set;
+  window.dbOnValue = onValue;
+
+  // 自動啟動程式
+  if (typeof window.init === 'function') {
+      window.init();
+  }
+</script>
+
+<!-- 業務邏輯 Script -->
+<script>
     const hkDistrictsMap = {
         "香港島": ["金鐘", "銅鑼灣", "中環", "上環", "西環", "灣仔", "北角", "鰂魚涌", "太古", "筲箕灣", "柴灣", "香港仔", "淺水灣", "赤柱"],
         "九龍": ["尖沙咀", "旺角", "油麻地", "佐敦", "紅磡", "何文田", "深水埗", "太子", "九龍塘", "九龍城", "黃大仙", "慈雲山", "牛池灣", "觀塘", "牛頭角", "九龍灣", "藍田", "將軍澳"],
@@ -807,71 +841,61 @@
     let isCategoryExpanded = false;
     let isSubDistrictExpanded = false;
 
-    async function init() {
-        await loadData();
-        renderFilterButtons();
-        renderList();
-    }
-
-    async function loadData() {
-        try {
-            // 加上時間戳參數避免手機瀏覽器快取舊資料
-            const response = await fetch(`${STORAGE_URL}/latest?_=${Date.now()}`);
-            if (response.ok) {
-                const json = await response.json();
-                if (json.record && json.record.restaurants) {
-                    restaurants = json.record.restaurants;
-                    sharedCategories = json.record.sharedCategories || defaultCategories;
-                    
-                    // 同步更新手機嘅本地快取
-                    localStorage.setItem('fan_fan_restaurants_pub', JSON.stringify(restaurants));
-                    localStorage.setItem('fan_fan_shared_categories_pub', JSON.stringify(sharedCategories));
-                    return;
-                }
+    // 初始化與 Firebase 即時監聽對接
+    function init() {
+        const foodMapRef = window.dbRef(window.db, 'foodMap');
+        
+        // 即時監聽：只要雲端有任何人修改資料，所有人的手機畫面會自動更新
+        window.dbOnValue(foodMapRef, (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                restaurants = data.restaurants || [];
+                sharedCategories = data.sharedCategories || defaultCategories;
+            } else {
+                // 如果雲端係第一次用，寫入預設示範資料
+                restaurants = [{
+                    id: 1,
+                    name: "Bakehouse",
+                    rating: 5,
+                    districts: ["中環", "灣仔"],
+                    categories: ["甜點/烘焙", "咖啡/輕食"],
+                    signature: "酸種蛋撻、可頌",
+                    address: "中環士丹利街14號地下",
+                    pros: "皮極度酥脆，蛋漿香濃不會過甜！",
+                    cons: "熱門時段常要排隊15-20分鐘。",
+                    provider: "公共地圖示範",
+                    comments: [{ user: "阿明", text: "真係好好食！" }]
+                }];
+                sharedCategories = [...defaultCategories];
+                saveDataToCloud();
             }
-        } catch(e) {
-            console.log("雲端讀取失敗，改用本地快取", e);
-        }
-
-        const savedCategories = localStorage.getItem('fan_fan_shared_categories_pub');
-        sharedCategories = savedCategories ? JSON.parse(savedCategories) : [...defaultCategories];
-
-        const savedRes = localStorage.getItem('fan_fan_restaurants_pub');
-        restaurants = savedRes ? JSON.parse(savedRes) : [{
-            id: 1,
-            name: "Bakehouse",
-            rating: 5,
-            districts: ["中環", "灣仔"],
-            categories: ["甜點/烘焙", "咖啡/輕食"],
-            signature: "酸種蛋撻、可頌",
-            address: "中環士丹利街14號地下",
-            pros: "皮極度酥脆，蛋漿香濃不會過甜！",
-            cons: "熱門時段常要排隊15-20分鐘。",
-            provider: "公共地圖示範",
-            comments: [{ user: "阿明", text: "真係好好食！" }]
-        }];
+            renderFilterButtons();
+            renderList();
+        });
     }
 
+    // 儲存資料到 Firebase 雲端
     async function saveDataToCloud() {
+        // 同步備份落手機本地快取
         localStorage.setItem('fan_fan_restaurants_pub', JSON.stringify(restaurants));
         localStorage.setItem('fan_fan_shared_categories_pub', JSON.stringify(sharedCategories));
 
         try {
-            await fetch(STORAGE_URL, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ restaurants, sharedCategories })
+            const foodMapRef = window.dbRef(window.db, 'foodMap');
+            await window.dbSet(foodMapRef, {
+                restaurants: restaurants,
+                sharedCategories: sharedCategories
             });
         } catch(e) {
-            console.log("雲端更新失敗", e);
+            console.log("Firebase 儲存失敗", e);
         }
     }
 
+    // 手動重新整理按鈕
     async function forceSync() {
-        await loadData();
         renderFilterButtons();
         renderList();
-        alert("🔄 資料已成功重新整理同步！");
+        alert("🔄 畫面已更新！");
     }
 
     function updateSubDistricts() {
@@ -1126,7 +1150,7 @@
 
         const navBtn = document.getElementById('modalNavBtn');
         if (item.address) {
-            navBtn.href = `[https://www.google.com/maps/search/?api=1&query=$](https://www.google.com/maps/search/?api=1&query=$){encodeURIComponent(item.name + ' ' + item.address)}`;
+            navBtn.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(item.name + ' ' + item.address)}`;
             navBtn.style.display = 'inline-flex';
         } else {
             navBtn.style.display = 'none';
@@ -1303,8 +1327,6 @@
         closeModal('addModal');
         renderList();
     }
-
-    window.onload = init;
 </script>
 </body>
 </html>
