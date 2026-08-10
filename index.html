@@ -61,7 +61,6 @@
             gap: 10px;
         }
 
-        /* 吉祥物 SVG 樣式 */
         .mascot-svg {
             width: 55px;
             height: auto;
@@ -322,7 +321,20 @@
             color: #C53030;
         }
 
-        /* 按鈕群組 (編輯/刪除) */
+        .map-link-btn {
+            display: inline-block;
+            background-color: #E2F0D9;
+            color: #276749;
+            border: 2px solid var(--text-main);
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 900;
+            text-decoration: none;
+            margin-top: 6px;
+            box-shadow: 2px 2px 0px var(--text-main);
+        }
+
         .action-btns {
             display: flex;
             gap: 10px;
@@ -342,7 +354,6 @@
         .btn-edit { background-color: #FFF3CD; }
         .btn-delete { background-color: #FFD1DC; color: #9B2C2C; }
 
-        /* 留言區樣式 */
         .comment-item {
             background: #FDF9F0;
             border: 2px solid var(--text-main);
@@ -404,9 +415,7 @@
 
     <header>
         <div class="brand-area">
-            <!-- 熊貓與奶油臘腸狗吉祥物 SVG (Joguman x Woody 風格) -->
             <svg class="mascot-svg" viewBox="0 0 120 60" xmlns="http://www.w3.org/2000/svg">
-                <!-- 熊貓頭 -->
                 <circle cx="35" cy="30" r="20" fill="#FFFFFF" stroke="#5C4033" stroke-width="2.5"/>
                 <circle cx="23" cy="16" r="7" fill="#5C4033"/>
                 <circle cx="47" cy="16" r="7" fill="#5C4033"/>
@@ -415,9 +424,7 @@
                 <circle cx="28" cy="26" r="2" fill="#FFF"/>
                 <circle cx="42" cy="26" r="2" fill="#FFF"/>
                 <ellipse cx="35" cy="34" rx="3" ry="2" fill="#5C4033"/>
-                <!-- 中間愛心飯糰 -->
                 <path d="M60 22 C60 18, 66 18, 66 22 C66 26, 60 30, 60 30 C60 30, 54 26, 54 22 C54 18, 60 18, 60 22 Z" fill="#FFB6C1" stroke="#5C4033" stroke-width="2"/>
-                <!-- 奶油咖啡色臘腸狗頭 -->
                 <path d="M75 15 Q85 12 95 20 Q105 25 102 38 Q100 45 90 44 Q80 43 78 30 Z" fill="#DDC09B" stroke="#5C4033" stroke-width="2.5"/>
                 <ellipse cx="80" cy="22" rx="4" ry="7" fill="#8B5E3C" transform="rotate(20 80 22)"/>
                 <circle cx="92" cy="28" r="2" fill="#5C4033"/>
@@ -461,8 +468,9 @@
             </div>
 
             <div class="detail-section">
-                <div class="detail-section-title">📍 地址</div>
+                <div class="detail-section-title">📍 地址與地圖</div>
                 <p id="modalAddress" class="detail-text"></p>
+                <div id="modalMapBtnContainer"></div>
             </div>
 
             <div class="detail-section">
@@ -485,13 +493,13 @@
                 <p id="modalProvider" class="detail-text"></p>
             </div>
 
-            <!-- 朋友留言區 -->
+            <!-- 朋友留言板 -->
             <div class="detail-section">
                 <div class="detail-section-title">💬 朋友留言板</div>
                 <div id="commentsList" style="margin-bottom: 10px;"></div>
                 <div style="display: flex; gap: 6px; margin-top: 8px;">
-                    <input type="text" id="commentAuthor" class="form-input" placeholder="你的名字" style="flex: 1; padding: 6px 10px; font-size: 0.8rem;">
-                    <input type="text" id="commentText" class="form-input" placeholder="寫個留言..." style="flex: 2; padding: 6px 10px; font-size: 0.8rem;">
+                    <input type="text" id="commentAuthor" class="form-input" placeholder="你的名字" style="flex: 1; padding: 6px 10px; font-size: 0.8rem;" required>
+                    <input type="text" id="commentText" class="form-input" placeholder="寫個留言..." style="flex: 2; padding: 6px 10px; font-size: 0.8rem;" required>
                     <button class="tag-btn" onclick="addComment()">發送</button>
                 </div>
             </div>
@@ -516,13 +524,13 @@
                     <input type="text" id="addName" class="form-input" required>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">星數評分</label>
+                    <label class="form-label">星數評分 *</label>
                     <select id="addRating" class="form-select">
-                        <option value="5">⭐⭐⭐⭐⭐ (5星 - 極推)</option>
-                        <option value="4.5">⭐⭐⭐⭐✨ (4.5星)</option>
-                        <option value="4" selected>⭐⭐⭐⭐ (4星 - 好吃)</option>
-                        <option value="3.5">⭐⭐⭐✨ (3.5星)</option>
-                        <option value="3">⭐⭐⭐ (3星)</option>
+                        <option value="5">⭐⭐⭐⭐⭐ (5星 - 有權再吃!!!!)</option>
+                        <option value="4">⭐⭐⭐⭐ (4星 - 好味!!!)</option>
+                        <option value="3">⭐⭐⭐ (3星 - OK啦)</option>
+                        <option value="2">⭐⭐ (2星 - 少少難食)</option>
+                        <option value="1">⭐ (1星 - 不吃後悔，吃了更後悔)</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -542,6 +550,10 @@
                     <input type="text" id="addAddress" class="form-input">
                 </div>
                 <div class="form-group">
+                    <label class="form-label">Google Maps 連結</label>
+                    <input type="url" id="addMapLink" class="form-input" placeholder="https://maps.app.goo.gl/...">
+                </div>
+                <div class="form-group">
                     <label class="form-label">推薦亮點</label>
                     <textarea id="addPros" class="form-textarea" rows="2"></textarea>
                 </div>
@@ -558,16 +570,15 @@
         </div>
     </div>
 
-    <!-- Firebase SDK 引入與邏輯 -->
+    <!-- Firebase SDK 引入與初始化 -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-app.js";
         import { getDatabase, ref, set, get, remove, push, child } from "https://www.gstatic.com/firebasejs/12.17.1/firebase-database.js";
 
-        // 你的 Firebase 設定
         const firebaseConfig = {
             apiKey: "AIzaSyA4o3_qufWsS-8r4cD2YBCXPA4K5ulrdV0",
             authDomain: "fanfan-dou-dim.firebaseapp.com",
-            databaseURL: "https://fanfan-dou-dim-default-rtdb.firebaseio.com", // 若有需要可對應你的 RTDB URL
+            databaseURL: "https://fanfan-dou-dim-default-rtdb.firebaseio.com",
             projectId: "fanfan-dou-dim",
             storageBucket: "fanfan-dou-dim.firebasestorage.app",
             messagingSenderId: "1081553811639",
@@ -619,7 +630,6 @@
             renderList();
         }
 
-        // 從 Firebase 讀取資料
         window.loadRestaurants = function() {
             const dbRef = window.ref(window.db);
             window.get(window.child(dbRef, 'restaurants')).then((snapshot) => {
@@ -636,11 +646,18 @@
             });
         }
 
-        function getStarRating(score) {
-            const full = Math.floor(score);
-            let s = '★'.repeat(full);
-            if (score % 1 !== 0) s += '✨';
-            return s;
+        // 新星等文字說明對應
+        function getStarRatingInfo(score) {
+            const num = parseInt(score) || 3;
+            const stars = '★'.repeat(num);
+            const descriptions = {
+                5: "5星 - 有權再吃!!!!",
+                4: "4星 - 好味!!!",
+                3: "3星 - OK啦",
+                2: "2星 - 少少難食",
+                1: "1星 - 不吃後悔，吃了更後悔"
+            };
+            return { stars, text: descriptions[num] || "OK啦" };
         }
 
         window.renderList = function() {
@@ -664,11 +681,12 @@
                     item.provider.toLowerCase().includes(query);
 
                 if (matchD && matchC && matchS) {
+                    const starInfo = getStarRatingInfo(item.rating);
                     html += `
                         <div class="card" onclick="openDetailModal('${id}')">
                             <div class="card-header">
                                 <h3 class="card-title">${item.name}</h3>
-                                <div class="stars">${getStarRating(item.rating)}</div>
+                                <div class="stars">${starInfo.stars}</div>
                             </div>
                             <div class="card-tags">
                                 ${(item.districts || []).map(d => `<span class="tag-badge">📍 ${d}</span>`).join('')}
@@ -691,14 +709,23 @@
             const item = restaurantsData[id];
             if (!item) return;
 
+            const starInfo = getStarRatingInfo(item.rating);
             document.getElementById('modalTitle').innerText = item.name;
-            document.getElementById('modalStars').innerText = `${getStarRating(item.rating)} (${item.rating}分)`;
+            document.getElementById('modalStars').innerText = `${starInfo.stars} (${starInfo.text})`;
             document.getElementById('modalTags').innerHTML = [
                 ...(item.districts || []).map(d => `<span class="tag-badge">📍 ${d}</span>`),
                 ...(item.categories || []).map(c => `<span class="tag-badge">🍴 ${c}</span>`)
             ].join(' ');
 
             document.getElementById('modalAddress').innerText = item.address || "未填寫地址";
+            
+            const mapContainer = document.getElementById('modalMapBtnContainer');
+            if (item.mapLink) {
+                mapContainer.innerHTML = `<a href="${item.mapLink}" target="_blank" class="map-link-btn">🗺️ 在 Google Maps 中打開</a>`;
+            } else {
+                mapContainer.innerHTML = '';
+            }
+
             document.getElementById('modalSignature').innerText = item.signature;
             document.getElementById('modalPros').innerText = item.pros || "無";
             document.getElementById('modalCons').innerText = item.cons || "無 (表現良好)";
@@ -710,7 +737,7 @@
 
         window.renderComments = function(commentsObj) {
             const cList = document.getElementById('commentsList');
-            const keys = Object.keys(commentsObj);
+            const keys = Object.keys(commentsObj || {});
             if (keys.length === 0) {
                 cList.innerHTML = `<div style="font-size:0.8rem; color:#A89F91;">暫無留言，來當第一個留言的朋友吧！</div>`;
                 return;
@@ -725,7 +752,7 @@
             const author = document.getElementById('commentAuthor').value.trim();
             const text = document.getElementById('commentText').value.trim();
             if (!author || !text) {
-                alert("請填寫名字與留言內容！");
+                alert("請填寫「你的名字」與「留言內容」！");
                 return;
             }
 
@@ -751,11 +778,12 @@
             document.getElementById('formModalTitle').innerText = "✏️ 編輯口袋餐廳";
             document.getElementById('editId').value = currentSelectedId;
             document.getElementById('addName').value = item.name;
-            document.getElementById('addRating').value = item.rating;
+            document.getElementById('addRating').value = item.rating || 3;
             document.getElementById('addDistrict').value = (item.districts || []).join(', ');
             document.getElementById('addCategory').value = (item.categories || []).join(', ');
             document.getElementById('addSignature').value = item.signature;
             document.getElementById('addAddress').value = item.address || "";
+            document.getElementById('addMapLink').value = item.mapLink || "";
             document.getElementById('addPros').value = item.pros || "";
             document.getElementById('addCons').value = item.cons || "";
             document.getElementById('addProvider').value = item.provider;
@@ -771,11 +799,12 @@
 
             const item = {
                 name: document.getElementById('addName').value.trim(),
-                rating: parseFloat(document.getElementById('addRating').value),
+                rating: parseInt(document.getElementById('addRating').value),
                 districts: document.getElementById('addDistrict').value.split(',').map(s => s.trim()).filter(Boolean),
                 categories: document.getElementById('addCategory').value.split(',').map(s => s.trim()).filter(Boolean),
                 signature: document.getElementById('addSignature').value.trim(),
                 address: document.getElementById('addAddress').value.trim(),
+                mapLink: document.getElementById('addMapLink').value.trim(),
                 pros: document.getElementById('addPros').value.trim(),
                 cons: document.getElementById('addCons').value.trim(),
                 provider: document.getElementById('addProvider').value.trim(),
