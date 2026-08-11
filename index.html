@@ -265,7 +265,7 @@
             gap: 4px;
         }
 
-        .tag-district, .tag-category {
+        .tag-district, .tag-category, .tag-service {
             background-color: var(--card-bg);
             color: #5C4033;
         }
@@ -424,7 +424,40 @@
             text-decoration: none;
             box-shadow: 0 2px 5px rgba(66, 133, 244, 0.3);
         }
-        .btn-nav:active {
+
+        .btn-whatsapp {
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            color: white;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            text-decoration: none;
+            box-shadow: 0 2px 5px rgba(37, 211, 102, 0.3);
+        }
+
+        .btn-gulu {
+            background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+            color: white;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.78rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            text-decoration: none;
+            box-shadow: 0 2px 5px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-nav:active, .btn-whatsapp:active, .btn-gulu:active {
             transform: scale(0.95);
         }
 
@@ -494,6 +527,25 @@
 
         .form-input:focus, .form-textarea:focus, .form-select:focus {
             border-color: var(--accent-pink-dark);
+        }
+
+        .checkbox-group {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            background: #FFFDF9;
+            padding: 12px 14px;
+            border: 2px solid #EFE6DC;
+            border-radius: var(--border-radius-sm);
+        }
+
+        .checkbox-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            cursor: pointer;
         }
 
         .btn-submit {
@@ -607,8 +659,14 @@
         <button class="sync-btn" onclick="forceSync()">🔄 重新整理</button>
     </div>
 
-    <!-- 搜尋框加入重置頁碼 -->
+    <!-- 搜尋框 -->
     <input type="text" id="searchInput" class="search-box" placeholder="🔍 搜尋店名、招牌食物、提供者..." oninput="currentPage=1; renderList()">
+
+    <!-- 堂食/外賣模式篩選 -->
+    <div class="filter-group">
+        <div class="filter-title">🍱 用餐模式篩選</div>
+        <div class="tags-scroll" id="serviceFilter"></div>
+    </div>
 
     <!-- 地區篩選列 -->
     <div class="filter-group">
@@ -658,6 +716,18 @@
                 <a id="modalNavBtn" href="#" target="_blank" class="btn-nav">🗺️ 帶我去</a>
             </div>
             <p id="modalAddress" class="detail-text"></p>
+        </div>
+
+        <!-- 訂座與聯絡專區 -->
+        <div class="detail-section" style="background: #E8F4F8; border: 1px solid #BEE5EB;">
+            <div class="detail-section-title" style="color: #0C5460;">📞 訂座 / 聯絡方式</div>
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
+                <div id="modalPhoneContainer" class="detail-text" style="font-size: 0.9rem;"></div>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px;">
+                    <a id="modalWhatsappBtn" href="#" target="_blank" class="btn-whatsapp" style="display:none;">💬 WhatsApp 訂座</a>
+                    <a id="modalGuluBtn" href="#" target="_blank" class="btn-gulu" style="display:none;">🎫 Gulu 排隊/訂座</a>
+                </div>
+            </div>
         </div>
 
         <div class="detail-section">
@@ -716,8 +786,17 @@
                     <option value="3">⭐⭐⭐ 3星 - OK啦</option>
                     <option value="2">⭐⭐ 2星 - 少少難食</option>
                     <option value="1">⭐ 1星 - 不吃後悔，吃了更後悔</option>
-                    <option value="0">⭐ 0星 - 未食過</option>
+                    <option value="0">✨ 0星 - 未食過</option>
                 </select>
+            </div>
+
+            <!-- 外賣 / 堂食選項 -->
+            <div class="form-group">
+                <label class="form-label">提供模式（可多選）*</label>
+                <div class="checkbox-group">
+                    <label class="checkbox-label"><input type="checkbox" id="serviceDineIn" checked> 🍽️ 堂食</label>
+                    <label class="checkbox-label"><input type="checkbox" id="serviceTakeaway" checked> 🥡 外賣</label>
+                </div>
             </div>
 
             <div class="form-group">
@@ -758,6 +837,23 @@
                 <input type="text" id="addAddress" class="form-input" placeholder="例如: 中環士丹利街14號">
             </div>
 
+            <!-- 訂座與聯絡專區表單 -->
+            <div class="form-group" style="background: #FAF6F0; padding: 12px; border-radius: 12px; border: 1px solid #EFE6DC;">
+                <label class="form-label" style="color: #8C4254;">📅 訂座 / 聯絡資料設定</label>
+                <div style="margin-bottom: 8px;">
+                    <label class="form-label" style="font-size: 0.8rem;">聯絡電話</label>
+                    <input type="text" id="addPhone" class="form-input" placeholder="例如: 23456789">
+                </div>
+                <div style="margin-bottom: 8px;">
+                    <label class="form-label" style="font-size: 0.8rem;">WhatsApp 訂座號碼 (輸入數字即可，例如: 91234567)</label>
+                    <input type="text" id="addWhatsapp" class="form-input" placeholder="例如: 91234567">
+                </div>
+                <div>
+                    <label class="form-label" style="font-size: 0.8rem;">Gulu 排隊/訂座連結</label>
+                    <input type="text" id="addGulu" class="form-input" placeholder="例如: https://go.gulu.io/...">
+                </div>
+            </div>
+
             <div class="form-group">
                 <label class="form-label">好食原因</label>
                 <textarea id="addPros" class="form-textarea" rows="2" placeholder="例如: 皮超酥脆"></textarea>
@@ -793,17 +889,14 @@
     appId: "1:1081553811639:web:43a378417da104aeae7532"
   };
 
-  // 初始化 Firebase
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
 
-  // 跨 module 畀下面傳統 function 呼叫
   window.db = db;
   window.dbRef = ref;
   window.dbSet = set;
   window.dbOnValue = onValue;
 
-  // 自動啟動程式
   if (typeof window.init === 'function') {
       window.init();
   }
@@ -835,39 +928,39 @@
     let tempSelectedCategories = [];
     let currentActiveDetailId = null;
 
-    // 分頁相關變數
     let currentPage = 1;
-    const itemsPerPage = 6; // 每頁顯示幾間餐廳（可自行調整）
+    const itemsPerPage = 6; 
 
     // 篩選狀態
+    let activeService = "全部";      // 堂食/外賣
     let activeDistrict = "全部";      // 大區
     let activeSubDistrict = "全部";   // 細區
     let activeCategory = "全部";      // 種類
 
-    // 展開開關狀態
     let isCategoryExpanded = false;
     let isSubDistrictExpanded = false;
 
-    // 初始化與 Firebase 即時監聽對接
     function init() {
         const foodMapRef = window.dbRef(window.db, 'foodMap');
         
-        // 即時監聽：只要雲端有任何人修改資料，所有人的手機畫面會自動更新
         window.dbOnValue(foodMapRef, (snapshot) => {
             const data = snapshot.val();
             if (data) {
                 restaurants = data.restaurants || [];
                 sharedCategories = data.sharedCategories || defaultCategories;
             } else {
-                // 如果雲端係第一次用，寫入預設示範資料
                 restaurants = [{
                     id: 1,
                     name: "Bakehouse",
                     rating: 5,
+                    services: ["堂食", "外賣"],
                     districts: ["中環", "灣仔"],
                     categories: ["甜點/烘焙", "咖啡/輕食"],
                     signature: "酸種蛋撻、可頌",
                     address: "中環士丹利街14號地下",
+                    phone: "23456789",
+                    whatsapp: "91234567",
+                    gulu: "",
                     pros: "皮極度酥脆，蛋漿香濃不會過甜！",
                     cons: "熱門時段常要排隊15-20分鐘。",
                     provider: "公共地圖示範",
@@ -881,9 +974,7 @@
         });
     }
 
-    // 儲存資料到 Firebase 雲端
     async function saveDataToCloud() {
-        // 同步備份落手機本地快取
         localStorage.setItem('fan_fan_restaurants_pub', JSON.stringify(restaurants));
         localStorage.setItem('fan_fan_shared_categories_pub', JSON.stringify(sharedCategories));
 
@@ -898,7 +989,6 @@
         }
     }
 
-    // 手動重新整理按鈕
     async function forceSync() {
         renderFilterButtons();
         renderList();
@@ -1001,15 +1091,22 @@
     }
 
     const presetDistricts = ["全部", "香港島", "九龍", "新界", "離島"];
+    const presetServices = ["全部", "🍽️ 堂食", "🥡 外賣"];
 
     function renderFilterButtons() {
+        // 0. 渲染堂食/外賣篩選
+        const sContainer = document.getElementById('serviceFilter');
+        sContainer.innerHTML = presetServices.map(s => 
+            `<button class="tag-btn ${s === activeService ? 'active' : ''}" onclick="setService('${s}')">${s}</button>`
+        ).join('');
+
         // 1. 渲染大區
         const dContainer = document.getElementById('districtFilter');
         dContainer.innerHTML = presetDistricts.map(d => 
             `<button class="tag-btn ${d === activeDistrict ? 'active' : ''}" onclick="setDistrict('${d}')">${d}</button>`
         ).join('');
 
-        // 2. 渲染細區 (若點選了特定大區)
+        // 2. 渲染細區
         const subContainerWrapper = document.getElementById('subDistrictContainer');
         const subContainer = document.getElementById('subDistrictFilter');
         const subTitle = document.getElementById('subDistrictTitle');
@@ -1034,7 +1131,7 @@
             subContainerWrapper.style.display = 'none';
         }
 
-        // 3. 渲染種類篩選 (前 5 個 + 更多按鈕)
+        // 3. 渲染種類篩選
         const cContainer = document.getElementById('categoryFilter');
         let allCategories = ["全部", ...sharedCategories];
         let displayCategories = isCategoryExpanded ? allCategories : allCategories.slice(0, 5);
@@ -1049,18 +1146,25 @@
         cContainer.innerHTML = catHtml;
     }
 
+    function setService(s) {
+        activeService = s;
+        currentPage = 1;
+        renderFilterButtons();
+        renderList();
+    }
+
     function setDistrict(d) {
         activeDistrict = d;
-        activeSubDistrict = "全部"; // 切換大區時重置細區
-        isSubDistrictExpanded = false; // 重置細區展開狀態
-        currentPage = 1; // 重置回第一頁
+        activeSubDistrict = "全部"; 
+        isSubDistrictExpanded = false; 
+        currentPage = 1; 
         renderFilterButtons();
         renderList();
     }
 
     function setSubDistrict(sub) {
         activeSubDistrict = sub;
-        currentPage = 1; // 重置回第一頁
+        currentPage = 1; 
         renderFilterButtons();
         renderList();
     }
@@ -1072,7 +1176,7 @@
 
     function setCategory(c) {
         activeCategory = c;
-        currentPage = 1; // 重置回第一頁
+        currentPage = 1; 
         renderFilterButtons();
         renderList();
     }
@@ -1087,11 +1191,10 @@
         return '★'.repeat(score);
     }
 
-    // 換頁函數
     function changePage(targetPage) {
         currentPage = targetPage;
         renderList();
-        window.scrollTo({ top: 0, behavior: 'smooth' }); // 切換頁面時自動捲動到最上方
+        window.scrollTo({ top: 0, behavior: 'smooth' }); 
     }
 
     function renderList() {
@@ -1099,6 +1202,14 @@
         const listContainer = document.getElementById('restaurantList');
 
         const filtered = restaurants.filter(item => {
+            // 服務類型篩選
+            let matchService = true;
+            if (activeService !== "全部") {
+                const serviceName = activeService.replace(/^[^\w\u4e00-\u9fa5]+/, '').trim(); // 移除前面的 Emoji
+                const itemServices = item.services || ["堂食", "外賣"]; // 相容舊資料
+                matchService = itemServices.includes(serviceName);
+            }
+
             let matchDistrict = false;
             if (activeDistrict === "全部") {
                 matchDistrict = true;
@@ -1115,7 +1226,7 @@
                 item.signature.toLowerCase().includes(query) ||
                 item.provider.toLowerCase().includes(query);
 
-            return matchDistrict && matchCategory && matchSearch;
+            return matchService && matchDistrict && matchCategory && matchSearch;
         });
 
         if (filtered.length === 0) {
@@ -1128,54 +1239,50 @@
             return;
         }
 
-        // --- Google 風格頁碼計算 ---
         const totalPages = Math.ceil(filtered.length / itemsPerPage);
         if (currentPage > totalPages) currentPage = 1;
 
         const start = (currentPage - 1) * itemsPerPage;
         const paginatedItems = filtered.slice(start, start + itemsPerPage);
 
-        // 渲染餐廳列表
-        let html = paginatedItems.map(item => `
-            <div class="card" onclick="openDetailModal(${item.id})">
-                <div class="card-header">
-                    <h3 class="card-title">${item.name}</h3>
-                    <div class="stars">${getStarRating(item.rating)}</div>
+        let html = paginatedItems.map(item => {
+            const itemServices = item.services || ["堂食", "外賣"];
+            return `
+                <div class="card" onclick="openDetailModal(${item.id})">
+                    <div class="card-header">
+                        <h3 class="card-title">${item.name}</h3>
+                        <div class="stars">${getStarRating(item.rating)}</div>
+                    </div>
+                    <div class="card-tags">
+                        ${itemServices.map(s => `<span class="tag-badge tag-service">${s === '堂食' ? '🍽️ 堂食' : '🥡 外賣'}</span>`).join('')}
+                        ${item.districts.map(d => `<span class="tag-badge tag-district">📍 ${d}</span>`).join('')}
+                        ${item.categories.map(c => `<span class="tag-badge tag-category">🍴 ${c}</span>`).join('')}
+                    </div>
+                    <div class="card-preview">
+                        <strong>✨ 必食 Preview:</strong> ${item.signature}
+                    </div>
+                    <div class="provider-tag">
+                        👤 提供者: ${item.provider}
+                    </div>
                 </div>
-                <div class="card-tags">
-                    ${item.districts.map(d => `<span class="tag-badge tag-district">📍 ${d}</span>`).join('')}
-                    ${item.categories.map(c => `<span class="tag-badge tag-category">🍴 ${c}</span>`).join('')}
-                </div>
-                <div class="card-preview">
-                    <strong>✨ 必食 Preview:</strong> ${item.signature}
-                </div>
-                <div class="provider-tag">
-                    👤 提供者: ${item.provider}
-                </div>
-            </div>
-        `).join('');
+            `;
+        }).join('');
 
-        // --- 生成 Google 風格的數字頁碼列 ---
         if (totalPages > 1) {
             html += `<div style="display: flex; justify-content: center; align-items: center; gap: 6px; margin-top: 24px; flex-wrap: wrap;">`;
-            
-            // 上一頁按鈕
             html += `<button class="tag-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled style="opacity:0.4; cursor:not-allowed;"' : ''}>上一頁</button>`;
 
-            // 動態計算要顯示的頁碼（最多顯示 5 個頁碼）
             let startPage = Math.max(1, currentPage - 2);
             let endPage = Math.min(totalPages, startPage + 4);
             if (endPage - startPage < 4) {
                 startPage = Math.max(1, endPage - 4);
             }
 
-            // 如果頭端大於 1，顯示第一頁及省略號
             if (startPage > 1) {
                 html += `<button class="tag-btn" onclick="changePage(1)">1</button>`;
                 if (startPage > 2) html += `<span style="color: #8C8C8C;">...</span>`;
             }
 
-            // 中間的數字頁碼
             for (let i = startPage; i <= endPage; i++) {
                 if (i === currentPage) {
                     html += `<button class="tag-btn active" style="background: var(--accent-pink-dark); color: white;">${i}</button>`;
@@ -1184,15 +1291,12 @@
                 }
             }
 
-            // 如果尾端小於總頁數，顯示省略號及最後一頁
             if (endPage < totalPages) {
                 if (endPage < totalPages - 1) html += `<span style="color: #8C8C8C;">...</span>`;
                 html += `<button class="tag-btn" onclick="changePage(${totalPages})">${totalPages}</button>`;
             }
 
-            // 下一頁按鈕
             html += `<button class="tag-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled style="opacity:0.4; cursor:not-allowed;"' : ''}>下一頁</button>`;
-            
             html += `</div>`;
         }
 
@@ -1208,7 +1312,9 @@
         document.getElementById('modalStars').innerText = getStarRating(item.rating);
         document.getElementById('modalRatingDesc').innerText = ratingDescriptions[item.rating] || "";
         
+        const itemServices = item.services || ["堂食", "外賣"];
         document.getElementById('modalTags').innerHTML = [
+            ...itemServices.map(s => `<span class="tag-badge tag-service">${s === '堂食' ? '🍽️ 堂食' : '🥡 外賣'}</span>`),
             ...item.districts.map(d => `<span class="tag-badge tag-district">📍 ${d}</span>`),
             ...item.categories.map(c => `<span class="tag-badge tag-category">🍴 ${c}</span>`)
         ].join(' ');
@@ -1222,6 +1328,35 @@
             navBtn.style.display = 'inline-flex';
         } else {
             navBtn.style.display = 'none';
+        }
+
+        // 填入訂座、電話、WhatsApp、Gulu 資料
+        const phoneContainer = document.getElementById('modalPhoneContainer');
+        const whatsappBtn = document.getElementById('modalWhatsappBtn');
+        const guluBtn = document.getElementById('modalGuluBtn');
+
+        let phoneTextHtml = '';
+        if (item.phone) {
+            phoneTextHtml += `📞 電話：<a href="tel:${item.phone}" style="color: #0C5460; font-weight: bold; text-decoration: none;">${item.phone}</a>`;
+        } else {
+            phoneTextHtml += `📞 電話：未有提供`;
+        }
+        phoneContainer.innerHTML = phoneTextHtml;
+
+        if (item.whatsapp) {
+            // 清理 WhatsApp 號碼格式確保 wa.me 正常運作
+            let cleanWa = item.whatsapp.replace(/[^0-9]/g, '');
+            whatsappBtn.href = `https://wa.me/852${cleanWa}`; // 預設香港區號 852，若需要國際號碼可自行調整
+            whatsappBtn.style.display = 'inline-flex';
+        } else {
+            whatsappBtn.style.display = 'none';
+        }
+
+        if (item.gulu) {
+            guluBtn.href = item.gulu;
+            guluBtn.style.display = 'inline-flex';
+        } else {
+            guluBtn.style.display = 'none';
         }
 
         document.getElementById('modalSignature').innerText = item.signature;
@@ -1252,8 +1387,16 @@
         document.getElementById('editRestaurantId').value = item.id;
         document.getElementById('addName').value = item.name;
         document.getElementById('addRating').value = item.rating;
+        
+        const itemServices = item.services || ["堂食", "外賣"];
+        document.getElementById('serviceDineIn').checked = itemServices.includes("堂食");
+        document.getElementById('serviceTakeaway').checked = itemServices.includes("外賣");
+
         document.getElementById('addSignature').value = item.signature;
         document.getElementById('addAddress').value = item.address || "";
+        document.getElementById('addPhone').value = item.phone || "";
+        document.getElementById('addWhatsapp').value = item.whatsapp || "";
+        document.getElementById('addGulu').value = item.gulu || "";
         document.getElementById('addPros').value = item.pros || "";
         document.getElementById('addCons').value = item.cons || "";
         document.getElementById('addProvider').value = item.provider;
@@ -1336,6 +1479,8 @@
         document.getElementById('formSubmitBtn').innerText = "💾 儲存到口袋名單";
         document.getElementById('editRestaurantId').value = "";
         document.getElementById('addForm').reset();
+        document.getElementById('serviceDineIn').checked = true;
+        document.getElementById('serviceTakeaway').checked = true;
         tempSelectedDistricts = [];
         tempSelectedCategories = [];
         renderSelectedDistricts();
@@ -1357,12 +1502,21 @@
         const editId = document.getElementById('editRestaurantId').value;
         const name = document.getElementById('addName').value.trim();
         const rating = parseInt(document.getElementById('addRating').value);
+        
+        let services = [];
+        if (document.getElementById('serviceDineIn').checked) services.push("堂食");
+        if (document.getElementById('serviceTakeaway').checked) services.push("外賣");
+
         const signature = document.getElementById('addSignature').value.trim();
         const address = document.getElementById('addAddress').value.trim();
+        const phone = document.getElementById('addPhone').value.trim();
+        const whatsapp = document.getElementById('addWhatsapp').value.trim();
+        const gulu = document.getElementById('addGulu').value.trim();
         const pros = document.getElementById('addPros').value.trim();
         const cons = document.getElementById('addCons').value.trim();
         const provider = document.getElementById('addProvider').value.trim();
 
+        if (services.length === 0) { alert("請至少選擇一種用餐模式（堂食或外賣）！"); return; }
         if (tempSelectedDistricts.length === 0) { alert("請選擇地區！"); return; }
         if (tempSelectedCategories.length === 0) { alert("請選擇種類！"); return; }
 
@@ -1371,10 +1525,14 @@
             if (item) {
                 item.name = name;
                 item.rating = rating;
+                item.services = services;
                 item.districts = [...tempSelectedDistricts];
                 item.categories = [...tempSelectedCategories];
                 item.signature = signature;
                 item.address = address;
+                item.phone = phone;
+                item.whatsapp = whatsapp;
+                item.gulu = gulu;
                 item.pros = pros;
                 item.cons = cons;
                 item.provider = provider;
@@ -1383,9 +1541,10 @@
             const newItem = {
                 id: Date.now(),
                 name, rating,
+                services,
                 districts: [...tempSelectedDistricts],
                 categories: [...tempSelectedCategories],
-                signature, address, pros, cons, provider,
+                signature, address, phone, whatsapp, gulu, pros, cons, provider,
                 comments: []
             };
             restaurants.unshift(newItem);
@@ -1393,7 +1552,7 @@
 
         await saveDataToCloud();
         closeModal('addModal');
-        currentPage = 1; // 新增後返回第一頁查看
+        currentPage = 1; 
         renderList();
     }
 </script>
