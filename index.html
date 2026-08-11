@@ -275,6 +275,11 @@
             color: #1B4F72;
             border: 1px solid #A9CCE3;
         }
+        .service-gulu {
+            background-color: #FFE5D0;
+            color: #A04000;
+            border: 1px solid #F5B041;
+        }
 
         .stars {
             color: var(--star-color);
@@ -478,23 +483,7 @@
             box-shadow: 0 2px 5px rgba(37, 211, 102, 0.3);
         }
 
-        .btn-gulu {
-            background: linear-gradient(135deg, #FF6B6B, #FF8E53);
-            color: white;
-            border: none;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 0.78rem;
-            font-weight: 700;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            text-decoration: none;
-            box-shadow: 0 2px 5px rgba(255, 107, 107, 0.3);
-        }
-
-        .btn-nav:active, .btn-whatsapp:active, .btn-gulu:active {
+        .btn-nav:active, .btn-whatsapp:active {
             transform: scale(0.95);
         }
 
@@ -760,9 +749,9 @@
             <div class="detail-section-title" style="color: #0C5460;">📞 訂座 / 聯絡方式</div>
             <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 8px;">
                 <div id="modalPhoneContainer" class="detail-text" style="font-size: 0.9rem;"></div>
-                <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px;">
+                <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; align-items: center;">
                     <a id="modalWhatsappBtn" href="#" target="_blank" class="btn-whatsapp" style="display:none;">💬 WhatsApp 訂座</a>
-                    <a id="modalGuluBtn" href="#" target="_blank" class="btn-gulu" style="display:none;">🎫 Gulu 排隊/訂座</a>
+                    <span id="modalGuluSpan" class="service-badge service-gulu" style="display:none; font-size: 0.85rem; padding: 4px 10px;">🎫 支援 Gulu 排隊/訂座</span>
                 </div>
             </div>
         </div>
@@ -886,9 +875,9 @@
                     <input type="text" id="addWhatsapp" class="form-input" placeholder="例如: 91234567">
                 </div>
                 <div>
-                    <label class="form-label" style="font-size: 0.8rem;">Gulu 排隊/訂座</label>
+                    <label class="form-label" style="font-size: 0.8rem;">Gulu 支援設定</label>
                     <div class="checkbox-group" style="background: #FFFDF9;">
-                        <label class="checkbox-label"><input type="checkbox" id="addGulu"> 🎫 提供 Gulu 排隊/訂座</label>
+                        <label class="checkbox-label"><input type="checkbox" id="addGulu"> 🎫 支援 Gulu 排隊/訂座</label>
                     </div>
                 </div>
             </div>
@@ -1286,6 +1275,7 @@
 
         let html = paginatedItems.map(item => {
             const itemServices = item.services || ["堂食", "外賣"];
+            let hasGulu = item.gulu === true || (typeof item.gulu === 'string' && item.gulu.trim() !== '');
             return `
                 <div class="card" onclick="openDetailModal(${item.id})">
                     <div class="card-header">
@@ -1294,6 +1284,7 @@
                                 <h3 class="card-title">${item.name}</h3>
                                 ${itemServices.includes('堂食') ? '<span class="service-badge service-dinein">🍽️ 堂食</span>' : ''}
                                 ${itemServices.includes('外賣') ? '<span class="service-badge service-takeaway">🥡 外賣</span>' : ''}
+                                ${hasGulu ? '<span class="service-badge service-gulu">🎫 Gulu</span>' : ''}
                             </div>
                         </div>
                         <div class="stars">${getStarRating(item.rating)}</div>
@@ -1375,7 +1366,7 @@
         // 填入訂座、電話、WhatsApp、Gulu 資料
         const phoneContainer = document.getElementById('modalPhoneContainer');
         const whatsappBtn = document.getElementById('modalWhatsappBtn');
-        const guluBtn = document.getElementById('modalGuluBtn');
+        const guluSpan = document.getElementById('modalGuluSpan');
 
         let phoneTextHtml = '';
         if (item.phone) {
@@ -1393,13 +1384,12 @@
             whatsappBtn.style.display = 'none';
         }
 
-        // 根據布林值或舊字串判斷 Gulu
+        // Gulu 改為純狀態顯示，不產生連結
         let hasGulu = item.gulu === true || (typeof item.gulu === 'string' && item.gulu.trim() !== '');
         if (hasGulu) {
-            guluBtn.href = (typeof item.gulu === 'string' && item.gulu.startsWith('http')) ? item.gulu : 'https://go.gulu.io/';
-            guluBtn.style.display = 'inline-flex';
+            guluSpan.style.display = 'inline-flex';
         } else {
-            guluBtn.style.display = 'none';
+            guluSpan.style.display = 'none';
         }
 
         document.getElementById('modalSignature').innerText = item.signature;
@@ -1560,7 +1550,7 @@
         const phone = document.getElementById('addPhone').value.trim();
         const whatsapp = document.getElementById('addWhatsapp').value.trim();
         const hasGulu = document.getElementById('addGulu').checked;
-        const gulu = hasGulu ? "https://go.gulu.io/" : "";
+        const gulu = hasGulu; // 儲存布林值代表有無 Gulu
         
         const pros = document.getElementById('addPros').value.trim();
         const cons = document.getElementById('addCons').value.trim();
