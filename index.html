@@ -231,6 +231,21 @@
             justify-content: space-between;
             align-items: flex-start;
             margin-bottom: 8px;
+            gap: 8px;
+        }
+
+        .card-title-area {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+        }
+
+        .card-title-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
         .card-title {
@@ -240,11 +255,33 @@
             margin: 0;
         }
 
+        /* 堂食/外賣獨立顏色 Tag 樣式 */
+        .service-badge {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+        }
+        .service-dinein {
+            background-color: #D1E8E2;
+            color: #235B4C;
+            border: 1px solid #A3D2C9;
+        }
+        .service-takeaway {
+            background-color: #D4E6F1;
+            color: #1B4F72;
+            border: 1px solid #A9CCE3;
+        }
+
         .stars {
             color: var(--star-color);
             font-size: 0.95rem;
             letter-spacing: 1px;
             font-weight: bold;
+            white-space: nowrap;
         }
 
         .card-tags {
@@ -265,7 +302,7 @@
             gap: 4px;
         }
 
-        .tag-district, .tag-category, .tag-service {
+        .tag-district, .tag-category {
             background-color: var(--card-bg);
             color: #5C4033;
         }
@@ -849,8 +886,10 @@
                     <input type="text" id="addWhatsapp" class="form-input" placeholder="例如: 91234567">
                 </div>
                 <div>
-                    <label class="form-label" style="font-size: 0.8rem;">Gulu 排隊/訂座連結</label>
-                    <input type="text" id="addGulu" class="form-input" placeholder="例如: https://go.gulu.io/...">
+                    <label class="form-label" style="font-size: 0.8rem;">Gulu 排隊/訂座</label>
+                    <div class="checkbox-group" style="background: #FFFDF9;">
+                        <label class="checkbox-label"><input type="checkbox" id="addGulu"> 🎫 提供 Gulu 排隊/訂座</label>
+                    </div>
                 </div>
             </div>
 
@@ -960,7 +999,7 @@
                     address: "中環士丹利街14號地下",
                     phone: "23456789",
                     whatsapp: "91234567",
-                    gulu: "",
+                    gulu: false,
                     pros: "皮極度酥脆，蛋漿香濃不會過甜！",
                     cons: "熱門時段常要排隊15-20分鐘。",
                     provider: "公共地圖示範",
@@ -1250,11 +1289,16 @@
             return `
                 <div class="card" onclick="openDetailModal(${item.id})">
                     <div class="card-header">
-                        <h3 class="card-title">${item.name}</h3>
+                        <div class="card-title-area">
+                            <div class="card-title-row">
+                                <h3 class="card-title">${item.name}</h3>
+                                ${itemServices.includes('堂食') ? '<span class="service-badge service-dinein">🍽️ 堂食</span>' : ''}
+                                ${itemServices.includes('外賣') ? '<span class="service-badge service-takeaway">🥡 外賣</span>' : ''}
+                            </div>
+                        </div>
                         <div class="stars">${getStarRating(item.rating)}</div>
                     </div>
                     <div class="card-tags">
-                        ${itemServices.map(s => `<span class="tag-badge tag-service">${s === '堂食' ? '🍽️ 堂食' : '🥡 外賣'}</span>`).join('')}
                         ${item.districts.map(d => `<span class="tag-badge tag-district">📍 ${d}</span>`).join('')}
                         ${item.categories.map(c => `<span class="tag-badge tag-category">🍴 ${c}</span>`).join('')}
                     </div>
@@ -1312,9 +1356,7 @@
         document.getElementById('modalStars').innerText = getStarRating(item.rating);
         document.getElementById('modalRatingDesc').innerText = ratingDescriptions[item.rating] || "";
         
-        const itemServices = item.services || ["堂食", "外賣"];
         document.getElementById('modalTags').innerHTML = [
-            ...itemServices.map(s => `<span class="tag-badge tag-service">${s === '堂食' ? '🍽️ 堂食' : '🥡 外賣'}</span>`),
             ...item.districts.map(d => `<span class="tag-badge tag-district">📍 ${d}</span>`),
             ...item.categories.map(c => `<span class="tag-badge tag-category">🍴 ${c}</span>`)
         ].join(' ');
@@ -1344,16 +1386,17 @@
         phoneContainer.innerHTML = phoneTextHtml;
 
         if (item.whatsapp) {
-            // 清理 WhatsApp 號碼格式確保 wa.me 正常運作
             let cleanWa = item.whatsapp.replace(/[^0-9]/g, '');
-            whatsappBtn.href = `https://wa.me/852${cleanWa}`; // 預設香港區號 852，若需要國際號碼可自行調整
+            whatsappBtn.href = `https://wa.me/852${cleanWa}`;
             whatsappBtn.style.display = 'inline-flex';
         } else {
             whatsappBtn.style.display = 'none';
         }
 
-        if (item.gulu) {
-            guluBtn.href = item.gulu;
+        // 根據布林值或舊字串判斷 Gulu
+        let hasGulu = item.gulu === true || (typeof item.gulu === 'string' && item.gulu.trim() !== '');
+        if (hasGulu) {
+            guluBtn.href = (typeof item.gulu === 'string' && item.gulu.startsWith('http')) ? item.gulu : 'https://go.gulu.io/';
             guluBtn.style.display = 'inline-flex';
         } else {
             guluBtn.style.display = 'none';
@@ -1396,7 +1439,11 @@
         document.getElementById('addAddress').value = item.address || "";
         document.getElementById('addPhone').value = item.phone || "";
         document.getElementById('addWhatsapp').value = item.whatsapp || "";
-        document.getElementById('addGulu').value = item.gulu || "";
+        
+        // 處理 Gulu 編輯狀態
+        let hasGulu = item.gulu === true || (typeof item.gulu === 'string' && item.gulu.trim() !== '');
+        document.getElementById('addGulu').checked = hasGulu;
+
         document.getElementById('addPros').value = item.pros || "";
         document.getElementById('addCons').value = item.cons || "";
         document.getElementById('addProvider').value = item.provider;
@@ -1481,6 +1528,7 @@
         document.getElementById('addForm').reset();
         document.getElementById('serviceDineIn').checked = true;
         document.getElementById('serviceTakeaway').checked = true;
+        document.getElementById('addGulu').checked = false;
         tempSelectedDistricts = [];
         tempSelectedCategories = [];
         renderSelectedDistricts();
@@ -1511,7 +1559,9 @@
         const address = document.getElementById('addAddress').value.trim();
         const phone = document.getElementById('addPhone').value.trim();
         const whatsapp = document.getElementById('addWhatsapp').value.trim();
-        const gulu = document.getElementById('addGulu').value.trim();
+        const hasGulu = document.getElementById('addGulu').checked;
+        const gulu = hasGulu ? "https://go.gulu.io/" : "";
+        
         const pros = document.getElementById('addPros').value.trim();
         const cons = document.getElementById('addCons').value.trim();
         const provider = document.getElementById('addProvider').value.trim();
