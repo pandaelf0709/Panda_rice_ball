@@ -606,7 +606,8 @@
         <button class="sync-btn" onclick="forceSync()">🔄 重新整理</button>
     </div>
 
-    <input type="text" id="searchInput" class="search-box" placeholder="🔍 搜尋店名、招牌食物、提供者..." oninput="renderList()">
+    <!-- 搜尋框加入重置頁碼 -->
+    <input type="text" id="searchInput" class="search-box" placeholder="🔍 搜尋店名、招牌食物、提供者..." oninput="currentPage=1; renderList()">
 
     <!-- 地區篩選列 -->
     <div class="filter-group">
@@ -833,6 +834,10 @@
     let tempSelectedCategories = [];
     let currentActiveDetailId = null;
 
+    // 分頁相關變數
+    let currentPage = 1;
+    const itemsPerPage = 6; // 每頁顯示幾間餐廳（可自行調整）
+
     // 篩選狀態
     let activeDistrict = "全部";      // 大區
     let activeSubDistrict = "全部";   // 細區
@@ -1047,12 +1052,14 @@
         activeDistrict = d;
         activeSubDistrict = "全部"; // 切換大區時重置細區
         isSubDistrictExpanded = false; // 重置細區展開狀態
+        currentPage = 1; // 重置回第一頁
         renderFilterButtons();
         renderList();
     }
 
     function setSubDistrict(sub) {
         activeSubDistrict = sub;
+        currentPage = 1; // 重置回第一頁
         renderFilterButtons();
         renderList();
     }
@@ -1064,6 +1071,7 @@
 
     function setCategory(c) {
         activeCategory = c;
+        currentPage = 1; // 重置回第一頁
         renderFilterButtons();
         renderList();
     }
@@ -1076,6 +1084,13 @@
     function getStarRating(score) {
         if (score <= 0) return '☆☆☆☆☆';
         return '★'.repeat(score);
+    }
+
+    // 換頁函數
+    function changePage(targetPage) {
+        currentPage = targetPage;
+        renderList();
+        window.scrollTo({ top: 0, behavior: 'smooth' }); // 切換頁面時自動捲動到最上方
     }
 
     function renderList() {
@@ -1112,7 +1127,15 @@
             return;
         }
 
-        listContainer.innerHTML = filtered.map(item => `
+        // --- Google 風格頁碼計算 ---
+        const totalPages = Math.ceil(filtered.length / itemsPerPage);
+        if (currentPage > totalPages) currentPage = 1;
+
+        const start = (currentPage - 1) * itemsPerPage;
+        const paginatedItems = filtered.slice(start, start + itemsPerPage);
+
+        // 渲染餐廳列表
+        let html = paginatedItems.map(item => `
             <div class="card" onclick="openDetailModal(${item.id})">
                 <div class="card-header">
                     <h3 class="card-title">${item.name}</h3>
@@ -1130,6 +1153,49 @@
                 </div>
             </div>
         `).join('');
+
+        // --- 生成 Google 風格的數字頁碼列 ---
+        if (totalPages > 1) {
+            html += `<div style="display: flex; justify-content: center; align-items: center; gap: 6px; margin-top: 24px; flex-wrap: wrap;">`;
+            
+            // 上一頁按鈕
+            html += `<button class="tag-btn" onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled style="opacity:0.4; cursor:not-allowed;"' : ''}>上一頁</button>`;
+
+            // 動態計算要顯示的頁碼（最多顯示 5 個頁碼）
+            let startPage = Math.max(1, currentPage - 2);
+            let endPage = Math.min(totalPages, startPage + 4);
+            if (endPage - startPage < 4) {
+                startPage = Math.max(1, endPage - 4);
+            }
+
+            // 如果頭端大於 1，顯示第一頁及省略號
+            if (startPage > 1) {
+                html += `<button class="tag-btn" onclick="changePage(1)">1</button>`;
+                if (startPage > 2) html += `<span style="color: #8C8C8C;">...</span>`;
+            }
+
+            // 中間的數字頁碼
+            for (let i = startPage; i <= endPage; i++) {
+                if (i === currentPage) {
+                    html += `<button class="tag-btn active" style="background: var(--accent-pink-dark); color: white;">${i}</button>`;
+                } else {
+                    html += `<button class="tag-btn" onclick="changePage(${i})" style="background: #EFE8DE;">${i}</button>`;
+                }
+            }
+
+            // 如果尾端小於總頁數，顯示省略號及最後一頁
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) html += `<span style="color: #8C8C8C;">...</span>`;
+                html += `<button class="tag-btn" onclick="changePage(${totalPages})">${totalPages}</button>`;
+            }
+
+            // 下一頁按鈕
+            html += `<button class="tag-btn" onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled style="opacity:0.4; cursor:not-allowed;"' : ''}>下一頁</button>`;
+            
+            html += `</div>`;
+        }
+
+        listContainer.innerHTML = html;
     }
 
     function openDetailModal(id) {
@@ -1326,6 +1392,7 @@
 
         await saveDataToCloud();
         closeModal('addModal');
+        currentPage = 1; // 新增後返回第一頁查看
         renderList();
     }
 </script>
